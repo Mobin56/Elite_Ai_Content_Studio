@@ -5,7 +5,7 @@ import { useAppStore, Project } from '@/store/useAppStore';
 import { useEditorStore, CanvasItem } from '@/store/useEditorStore';
 import { useBrandStore } from '@/store/useBrandStore';
 import { generateMCQ, MCQQuestion } from '@/utils/ai';
-import { calculatePremiumMCQLayout, calculateQuizizzGridMCQLayout } from '@/utils/canvas-helpers';
+import { calculateDynamicMCQLayout } from '@/utils/canvas-helpers';
 import { Sparkles, Brain, CheckCircle, RefreshCw, Send, Check } from 'lucide-react';
 
 export default function AIMCQView() {
@@ -17,7 +17,7 @@ export default function AIMCQView() {
   const [className, setClassName] = useState('HSC / College');
   const [difficulty, setDifficulty] = useState('Medium');
   const [language, setLanguage] = useState('English');
-  const [layoutStyle, setLayoutStyle] = useState<'stacked' | 'grid'>('stacked');
+  const [layoutStyle, setLayoutStyle] = useState<string>('stacked');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<MCQQuestion | null>(null);
 
@@ -48,23 +48,15 @@ export default function AIMCQView() {
     if (!result) return;
     
     const logoUrl = brandKit.logos.length > 0 ? brandKit.logos[0] : '';
-    const { items, height } = layoutStyle === 'grid'
-      ? calculateQuizizzGridMCQLayout(
-          result.question,
-          result.options,
-          brandKit.brandName,
-          brandKit.primaryColor,
-          brandKit.secondaryColor,
-          logoUrl
-        )
-      : calculatePremiumMCQLayout(
-          result.question,
-          result.options,
-          brandKit.brandName,
-          brandKit.primaryColor,
-          brandKit.secondaryColor,
-          logoUrl
-        );
+    const { items, height } = calculateDynamicMCQLayout(
+      layoutStyle,
+      result.question,
+      result.options,
+      brandKit.brandName,
+      brandKit.primaryColor,
+      brandKit.secondaryColor,
+      logoUrl
+    );
 
     const projectTemplateId = `project-mcq-${Date.now()}`;
     const newProject = {
@@ -169,14 +161,39 @@ export default function AIMCQView() {
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-slate-400">MCQ Canvas Layout</label>
+            <label className="text-xs font-semibold text-slate-400">MCQ Canvas Layout (20 Presets)</label>
             <select
               value={layoutStyle}
               onChange={(e: any) => setLayoutStyle(e.target.value)}
               className="w-full px-3 py-2 text-sm rounded-lg glass-input text-foreground font-sans"
             >
-              <option value="stacked">Vertical Stack (Spacious)</option>
-              <option value="grid">2x2 Grid (Quizizz Style)</option>
+              <optgroup label="Core Dynamic Layouts">
+                <option value="stacked">Vertical Stack (Spacious)</option>
+                <option value="grid">2x2 Grid (Quizizz Style)</option>
+              </optgroup>
+              <optgroup label="Dark Neon & Gamified">
+                <option value="neon">Glowing Neon Pink & Cyan</option>
+                <option value="cyberpunk">Cyberpunk Yellow & Magenta</option>
+                <option value="retro-wave">Retro Synthwave Purple</option>
+                <option value="speed-run">Carbon Slate & Hot Red</option>
+              </optgroup>
+              <optgroup label="Creative & Infographic">
+                <option value="glassmorphic">Frosted Glassmorphism</option>
+                <option value="chalkboard">Classroom Chalkboard Green</option>
+                <option value="math-sheets">Blueprint Sheet Grid</option>
+                <option value="interactive-poll">Indigo Interactive Poll</option>
+              </optgroup>
+              <optgroup label="Academic & Classic Board">
+                <option value="pastel">Soft Pastel & Cream Card</option>
+                <option value="minimalist">Minimalist Academic Serif</option>
+                <option value="classic-board">Golden Amber & Dark Navy</option>
+                <option value="modern-academy">Modern Academy Slate Card</option>
+                <option value="sunset-gradient">Sunset Orange & Purple</option>
+                <option value="coaching-special">Coaching Special Red & White</option>
+                <option value="dark-stealth">Stealth Black & Zn-zinc Outline</option>
+                <option value="royal-gold">Royal Emerald & Gold Accent</option>
+                <option value="corporate-clean">Corporate Clean Navy Blue</option>
+              </optgroup>
             </select>
           </div>
 

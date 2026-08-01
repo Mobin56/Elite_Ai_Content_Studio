@@ -40,9 +40,10 @@ interface AppState {
   currentProjectId: string | null;
   adminStats: AdminStats;
   
-  // Super Admin Credentials
+  // Super Admin Credentials & Member Sessions
   adminPassword: string;
   members: Member[];
+  currentMemberId: string | null; // null represents the Principal Super Admin
   
   toggleTheme: () => void;
   setTheme: (theme: 'light' | 'dark') => void;
@@ -62,6 +63,7 @@ interface AppState {
   deleteMember: (id: string) => void;
   allocateCredits: (memberId: string, amount: number) => void;
   changeAdminPassword: (password: string) => void;
+  loginAsMember: (memberId: string | null) => void;
 }
 
 const defaultAdminStats: AdminStats = {
@@ -93,22 +95,41 @@ export const useAppStore = create<AppState>()(
       // Admin configurations
       adminPassword: 'admin123',
       members: defaultMembers,
+      currentMemberId: null,
 
       toggleTheme: () => set((state) => ({ theme: state.theme === 'light' ? 'dark' : 'light' })),
       setTheme: (theme) => set({ theme }),
       setView: (activeView) => set({ activeView }),
       
       deductCredits: (amount) => {
-        const { aiCredits } = get();
-        if (aiCredits >= amount) {
-          set({ aiCredits: aiCredits - amount });
-          set((state) => ({
-            adminStats: {
-              ...state.adminStats,
-              creditsUsed: state.adminStats.creditsUsed + amount
-            }
-          }));
-          return true;
+        const { currentMemberId, members, aiCredits } = get();
+        if (currentMemberId === null) {
+          // Principal Admin
+          if (aiCredits >= amount) {
+            set({ aiCredits: aiCredits - amount });
+            set((state) => ({
+              adminStats: {
+                ...state.adminStats,
+                creditsUsed: state.adminStats.creditsUsed + amount
+              }
+            }));
+            return true;
+          }
+        } else {
+          // Member Session
+          const member = members.find(m => m.id === currentMemberId);
+          if (member && member.credits >= amount) {
+            set((state) => ({
+              members: state.members.map(m => 
+                m.id === currentMemberId ? { ...m, credits: m.credits - amount } : m
+              ),
+              adminStats: {
+                ...state.adminStats,
+                creditsUsed: state.adminStats.creditsUsed + amount
+              }
+            }));
+            return true;
+          }
         }
         return false;
       },
@@ -201,6 +222,7 @@ export const useAppStore = create<AppState>()(
       }),
 
       changeAdminPassword: (adminPassword) => set({ adminPassword }),
+      loginAsMember: (currentMemberId) => set({ currentMemberId }),
     }),
     {
       name: 'elite-app-store',

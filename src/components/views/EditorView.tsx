@@ -5,7 +5,7 @@ import { useEditorStore, CanvasItem } from '@/store/useEditorStore';
 import { useAppStore, Project } from '@/store/useAppStore';
 import { useBrandStore } from '@/store/useBrandStore';
 import { 
-  getSnapGuidelines, getQRCodeUrl, SnapLine,
+  getSnapGuidelines, getQRCodeUrl,
   generateBarChartSVG, generatePieChartSVG, generateLineChartSVG 
 } from '@/utils/canvas-helpers';
 import katex from 'katex';
@@ -17,11 +17,16 @@ import {
   Type, Square, Image as ImageIcon, BarChart3, QrCode, Plus, Minus, Move, RotateCw
 } from 'lucide-react';
 
+interface SnapLine {
+  type: 'x' | 'y';
+  position: number;
+}
+
 export default function EditorView() {
   const { 
     items, selectedId, canvasWidth, canvasHeight, 
     addItem, updateItem, deleteItem, duplicateItem, selectItem, 
-    bringToFront, sendToBack, moveUp, moveDown, alignItem, undo, redo, clearCanvas 
+    bringToFront, sendToBack, moveUp, moveDown, alignItem, undo, redo, clearCanvas, loadDesign
   } = useEditorStore();
 
   const { saveProject, currentProjectId, setView } = useAppStore();
@@ -58,6 +63,110 @@ export default function EditorView() {
     initialX: 0, initialY: 0, initialWidth: 0, initialHeight: 0, initialRotation: 0,
     startX: 0, startY: 0, handle: null
   });
+
+  // Synchronize Brand Kit updates to current canvas items dynamically
+  useEffect(() => {
+    if (items.length === 0) return;
+    const logoUrl = brandKit.logos.length > 0 ? brandKit.logos[0] : '/logo-transparent.png';
+    const primary = brandKit.primaryColor || '#121540';
+    const secondary = brandKit.secondaryColor || '#3b82f6';
+    
+    let changed = false;
+    const updatedItems = items.map(item => {
+      // 1. Update logo source
+      if (item.id === 'brand-logo' && item.type === 'logo') {
+        if (item.imageProps?.src !== logoUrl) {
+          changed = true;
+          return {
+            ...item,
+            imageProps: {
+              ...item.imageProps,
+              src: logoUrl
+            }
+          };
+        }
+      }
+      
+      // 2. Update brand label text
+      if ((item.id === 'brand-label' || item.id === 'header-brand' || item.id === 'inst-title') && item.type === 'text' && item.textProps) {
+        const uppercaseBrand = brandKit.brandName.toUpperCase();
+        if (item.textProps.content !== uppercaseBrand && item.textProps.content !== brandKit.brandName) {
+          changed = true;
+          return {
+            ...item,
+            textProps: {
+              ...item.textProps,
+              content: item.textProps.content === item.textProps.content.toUpperCase() ? uppercaseBrand : brandKit.brandName
+            }
+          };
+        }
+      }
+
+      // 3. Update footer details text
+      if (item.id === 'footer-details' && item.type === 'text' && item.textProps) {
+        const footerContent = `Join online: ${brandKit.brandName} • Learn Today, Lead Tomorrow`;
+        if (item.textProps.content !== footerContent) {
+          changed = true;
+          return {
+            ...item,
+            textProps: {
+              ...item.textProps,
+              content: footerContent
+            }
+          };
+        }
+      }
+
+      // 4. Update canvas background and card shapes to match brand kit colors
+      if (item.id === 'bg-rect' && item.type === 'shape' && item.shapeProps) {
+        if (item.shapeProps.fill !== primary || item.shapeProps.stroke !== secondary) {
+          changed = true;
+          return {
+            ...item,
+            shapeProps: {
+              ...item.shapeProps,
+              fill: primary,
+              stroke: secondary
+            }
+          };
+        }
+      }
+
+      // 5. Update ambient glow circles in corners to match brand secondary color
+      if ((item.id === 'glow-top-left' || item.id === 'glow-bottom-right' || item.id === 'dec-circle-1') && item.type === 'shape' && item.shapeProps) {
+        if (item.shapeProps.fill !== secondary) {
+          changed = true;
+          return {
+            ...item,
+            shapeProps: {
+              ...item.shapeProps,
+              fill: secondary
+            }
+          };
+        }
+      }
+
+      // 6. Update corner bracket highlights
+      if (item.id && (item.id.startsWith('corner-bracket') || item.id.startsWith('cb-')) && item.type === 'shape' && item.shapeProps) {
+        if (item.shapeProps.fill !== secondary) {
+          changed = true;
+          return {
+            ...item,
+            shapeProps: {
+              ...item.shapeProps,
+              fill: secondary
+            }
+          };
+        }
+      }
+
+      return item;
+    }) as CanvasItem[];
+
+    if (changed) {
+      loadDesign(updatedItems, canvasWidth, canvasHeight);
+    }
+  }, [brandKit, currentProjectId]);
 
   // Auto save draft to current project listing
   useEffect(() => {

@@ -17,7 +17,7 @@ export interface CopywritingOutput {
   cta: string;
 }
 
-// High quality mock databases for educational categories
+// High quality mock databases for educational categories in English
 const mockMCQData: Record<string, MCQQuestion[]> = {
   Physics: [
     {
@@ -99,6 +99,76 @@ const mockMCQData: Record<string, MCQQuestion[]> = {
   ]
 };
 
+// High quality mock databases for educational categories in Bangla
+const mockBanglaMCQData: Record<string, MCQQuestion[]> = {
+  Physics: [
+    {
+      question: "কোনটি বস্তুর ভরবেগের পরিবর্তনের হারের সমান?",
+      options: ["বেগ", "ত্বরণ", "বল", "গতিশক্তি"],
+      answer: "বল",
+      explanation: "নিউটনের গতির দ্বিতীয় সূত্রানুসারে, বস্তুর ভরবেগের পরিবর্তনের হার তার ওপর প্রযুক্ত বলের সমানুপাতিক এবং বল যেদিকে ক্রিয়া করে ভরবেগের পরিবর্তনও সেদিকেই ঘটে। (F = dp/dt)।"
+    },
+    {
+      question: "পৃথিবীর পৃষ্ঠ থেকে মুক্তিবেগ (Escape velocity) কত?",
+      options: ["৯.৮ কিমি/সে.", "১১.২ কিমি/সে.", "৪২.১ কিমি/সে.", "৭.৫ কিমি/সে."],
+      answer: "১১.২ কিমি/সে.",
+      explanation: "পৃথিবী পৃষ্ঠ থেকে যেকোনো বস্তুকে সেকেন্ডে ১১.২ কিমি বেগে উপরের দিকে নিক্ষেপ করলে তা আর পৃথিবীতে ফিরে আসে না। একে মুক্তিবেগ বলে।"
+    }
+  ],
+  Chemistry: [
+    {
+      question: "ক্ষারীয় দ্রবণে কোন নির্দেশকটি গোলাপী বর্ণ ধারণ করে?",
+      options: ["মিথাইল অরেঞ্জ", "ফেনলফথ্যালিন", "লিটমাস পেপার", "ব্রোমোথাইমল ব্লু"],
+      answer: "ফেনলফথ্যালিন",
+      explanation: "ফেনলফথ্যালিন অম্লীয় দ্রবণে বর্ণহীন থাকে কিন্তু ক্ষারীয় দ্রবণে (pH > ৪.২) গোলাপী বা বেগুনি বর্ণ ধারণ করে।"
+    },
+    {
+      question: "পানির রাসায়নিক সংকেত কোনটি?",
+      options: ["H2O", "CO2", "NaCl", "HCl"],
+      answer: "H2O",
+      explanation: "পানির অণু দুটি হাইড্রোজেন পরমাণু এবং একটি অক্সিজেন পরমাণু দ্বারা গঠিত।"
+    }
+  ],
+  Mathematics: [
+    {
+      question: "সীমা মূল্যায়ন করুন: \\lim_{x \\to 0} \\frac{\\sin(x)}{x}।",
+      options: ["০", "১", "অসীম", "অসংজ্ঞায়িত"],
+      answer: "১",
+      explanation: "L'Hopital এর সূত্র বা জ্যামিতিক সীমা ব্যবহার করে, \\lim_{x \\to 0} \\frac{\\sin(x)}{x} = ১।"
+    },
+    {
+      question: "একটি বৃত্তের ব্যাসার্ধ r হলে, তার ক্ষেত্রফলের সূত্র কী?",
+      options: ["২\\pi r", "\\pi r^2", "\\pi d", "\\frac{4}{3}\\pi r^3"],
+      answer: "\\pi r^2",
+      explanation: "r ব্যাসার্ধের একটি বৃত্তের ক্ষেত্রফল হলো \\pi r^2।"
+    }
+  ],
+  Biology: [
+    {
+      question: "উদ্ভিদ কোষের শক্তিঘর (Powerhouse) বলা হয় কোন অঙ্গাণুটিকে?",
+      options: ["প্লাস্টিড", "গলজি বডি", "مাইটোকন্ড্রিয়া", "লাইসোসোম"],
+      answer: "মাইটোকন্ড্রিয়া",
+      explanation: "মাইটোকন্ড্রিয়ায় কোষের সমস্ত শক্তির বিপাকীয় কাজ সম্পন্ন হয় এবং ATP উৎপন্ন হয়, তাই একে কোষের শক্তিঘর বলা হয়।"
+    }
+  ],
+  ICT: [
+    {
+      question: "IP-এর পূর্ণরূপ কী?",
+      options: ["Internet Protocol", "Internet Provider", "Information Port", "Instant Packet"],
+      answer: "Internet Protocol",
+      explanation: "IP হলো Internet Protocol যা ইন্টারনেটে ডাটা প্যাকেট আদান-প্রদানের প্রধান নিয়মাবলী বা অ্যাড্রেস নির্ধারণ করে।"
+    }
+  ],
+  GK: [
+    {
+      question: "বিশ্বের দীর্ঘতম নদী কোনটি?",
+      options: ["আমাজন নদী", "নীল নদ", "ইয়াংসি নদী", "মিসিসিপি নদী"],
+      answer: "নীল নদ",
+      explanation: "নীল নদ হলো বিশ্বের দীর্ঘতম নদী, যার দৈর্ঘ্য প্রায় ৬,৬৫০ কিলোমিটার এবং এটি আফ্রিকায় অবস্থিত।"
+    }
+  ]
+};
+
 const defaultMCQ: MCQQuestion = {
   question: "What is the primary function of DNA in living organisms?",
   options: ["Energy storage", "Storage of genetic information", "Catalyzing metabolic reactions", "Forming cellular membranes"],
@@ -124,7 +194,6 @@ export const mockSVGIllustrations: Record<string, string> = {
     </defs>
   </svg>`,
   Biology: `<svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <!-- DNA double helix representation -->
     <path d="M30 20C40 30 60 30 70 20M30 40C40 50 60 50 70 40M30 60C40 70 60 70 70 60M30 80C40 90 60 90 70 80" stroke="#10b981" stroke-width="2"/>
     <path d="M70 20C60 30 40 30 30 20M70 40C60 50 40 50 30 40M70 60C60 70 40 70 30 60M70 80C60 90 40 90 30 80" stroke="#3b82f6" stroke-width="2"/>
     <line x1="40" y1="23" x2="60" y2="23" stroke="#a855f7" stroke-width="2"/>
@@ -132,14 +201,11 @@ export const mockSVGIllustrations: Record<string, string> = {
     <line x1="37" y1="65" x2="63" y2="65" stroke="#f59e0b" stroke-width="2"/>
   </svg>`,
   Physics: `<svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <!-- Atom orbits -->
     <ellipse cx="50" cy="50" rx="40" ry="15" stroke="#6366f1" stroke-width="1.5" transform="rotate(30 50 50)"/>
     <ellipse cx="50" cy="50" rx="40" ry="15" stroke="#22d3ee" stroke-width="1.5" transform="rotate(-30 50 50)"/>
     <ellipse cx="50" cy="50" rx="40" ry="15" stroke="#a855f7" stroke-width="1.5" transform="rotate(90 50 50)"/>
-    <!-- Nucleus -->
     <circle cx="50" cy="50" r="6" fill="#fb7185"/>
     <circle cx="48" cy="48" r="3" fill="#ffffff" opacity="0.5"/>
-    <!-- Electrons -->
     <circle cx="15" cy="40" r="3" fill="#6366f1"/>
     <circle cx="85" cy="60" r="3" fill="#22d3ee"/>
     <circle cx="50" cy="90" r="3" fill="#a855f7"/>
@@ -194,39 +260,16 @@ export const generateMCQ = async (
 
   // Simulated AI response
   await new Promise((resolve) => setTimeout(resolve, 800)); // Simulate networking
-  const list = mockMCQData[subject] || mockMCQData['Physics'];
-  const randomIndex = Math.floor(Math.random() * list.length);
-  const selected = list[randomIndex] || defaultMCQ;
-  
-  // Custom language translation simulator
-  let questionText = selected.question;
-  let optionsText = [...selected.options];
-  let answerText = selected.answer;
-  let explanationText = selected.explanation;
   
   if (language === 'Bangla') {
-    if (subject === 'Physics') {
-      questionText = "কোনটি বস্তুর ভরবেগের পরিবর্তনের হারের সমান?";
-      optionsText = ["বেগ", "ত্বরণ", "বল", "গতিশক্তি"];
-      answerText = "বল";
-      explanationText = "নিউটনের গতির দ্বিতীয় সূত্রানুসারে, বস্তুর ভরবেগের পরিবর্তনের হার তার ওপর প্রযুক্ত বলের সমানুপাতিক এবং বল যেদিকে ক্রিয়া করে ভরবেগের পরিবর্তনও সেদিকেই ঘটে। (F = dp/dt)।";
-    } else if (subject === 'Mathematics') {
-      questionText = "সীমা মূল্যায়ন করুন: \\lim_{x \\to 0} \\frac{\\sin(x)}{x}।";
-      optionsText = ["০", "১", "অসীম", "অসংজ্ঞায়িত"];
-      answerText = "১";
-      explanationText = "L'Hopital এর সূত্র বা জ্যামিতিক সীমা ব্যবহার করে, \\lim_{x \\to 0} \\frac{\\sin(x)}{x} = ১।";
-    } else {
-      questionText = `[বাংলা] ${selected.question}`;
-      explanationText = `[বাংলা] ${selected.explanation}`;
-    }
+    const list = mockBanglaMCQData[subject] || mockBanglaMCQData['Physics'];
+    const randomIndex = Math.floor(Math.random() * list.length);
+    return list[randomIndex] || list[0];
   }
 
-  return {
-    question: questionText,
-    options: optionsText as [string, string, string, string],
-    answer: answerText,
-    explanation: explanationText
-  };
+  const list = mockMCQData[subject] || mockMCQData['Physics'];
+  const randomIndex = Math.floor(Math.random() * list.length);
+  return list[randomIndex] || defaultMCQ;
 };
 
 export const generateCopywriting = async (
