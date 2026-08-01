@@ -168,6 +168,7 @@ export default function AIMCQView() {
               className="w-full px-3 py-2 text-sm rounded-lg glass-input text-foreground font-sans"
             >
               <optgroup label="Core Dynamic Layouts">
+                <option value="quiz-show">(Recommended) Quiz Show Premium Grid (Image Template)</option>
                 <option value="stacked">Vertical Stack (Spacious)</option>
                 <option value="grid">2x2 Grid (Quizizz Style)</option>
               </optgroup>

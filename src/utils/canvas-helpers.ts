@@ -208,7 +208,7 @@ export const getQRCodeUrl = (data: string, color: string = '000000'): string => 
   return `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(data)}&color=${cleanColor}&bgcolor=ffffff`;
 };
 
-// DYNAMIC BANNER COMPILER supporting exactly 20 premium layouts
+// DYNAMIC BANNER COMPILER supporting exactly 21 premium layouts (including Quiz Show Premium)
 export const calculateDynamicMCQLayout = (
   style: string,
   question: string,
@@ -244,11 +244,19 @@ export const calculateDynamicMCQLayout = (
   let goldDecor = false;
   let mathGrid = false;
   let checkboxDecor = false;
-  let logoCentered = true;
+
+  // Detect Bengali characters to automatically translate layout badges
+  const isBangla = /[\u0980-\u09FF]/.test(question);
 
   // Match style definitions
   switch (style) {
     case 'grid':
+      gridLayout = true;
+      break;
+    case 'quiz-show':
+      bgFill = '#02040a';
+      bgStroke = '#0052cc';
+      bgStrokeWidth = 5;
       gridLayout = true;
       break;
     case 'neon':
@@ -414,115 +422,243 @@ export const calculateDynamicMCQLayout = (
     );
   }
 
-  // 3: Branding information
-  items.push(
-    {
-      id: 'brand-logo',
-      type: logo ? 'logo' : 'shape',
-      x: 350, y: 35, width: 100, height: 50, rotation: 0, opacity: 1, locked: false, zIndex: 8,
-      imageProps: logo ? { src: logo, blur: 0, brightness: 1, contrast: 1 } : undefined,
-      shapeProps: logo ? undefined : { shapeType: 'circle', fill: sc, stroke: '', strokeWidth: 0 }
-    },
-    {
-      id: 'brand-label',
-      type: 'text',
-      x: 100, y: 95, width: 600, height: 30, rotation: 0, opacity: 1, locked: false, zIndex: 9,
-      textProps: {
-        content: brandName.toUpperCase(),
-        fontSize: 16,
-        fontFamily: fontTheme,
-        color: textTheme === '#ffffff' ? '#e2e8f0' : textTheme,
-        bold: true,
-        align: 'center',
-        letterSpacing: 2.5
-      }
-    },
-    {
-      id: 'subtitle-banner',
-      type: 'text',
-      x: 100, y: 130, width: 600, height: 30, rotation: 0, opacity: 1, locked: false, zIndex: 10,
-      textProps: {
-        content: "DAILY MCQ CHALLENGE",
-        fontSize: 22,
-        fontFamily: fontTheme,
-        color: sc,
-        bold: true,
-        align: 'center',
-        letterSpacing: 1.5,
-        glow: true
-      }
-    }
-  );
-
-  if (gridLayout) {
-    // 2X2 GRID LAYOUT RENDERING
+  // 3: Branding / Top Header segments
+  if (style === 'quiz-show') {
+    // Ultra-Premium "MCQ Quiz" badge
     items.push(
       {
-        id: 'question-card',
+        id: 'badge-shield',
         type: 'shape',
-        x: 110, y: 190, width: 580, height: 210, rotation: 0, opacity: 1, locked: false, zIndex: 11,
-        shapeProps: { shapeType: 'rect', fill: 'rgba(255, 255, 255, 0.02)', stroke: sc, strokeWidth: 3 }
+        x: 230, y: 20, width: 340, height: 120, rotation: 0, opacity: 1, locked: false, zIndex: 8,
+        shapeProps: { shapeType: 'rect', fill: '#050a18', stroke: '#00e5ff', strokeWidth: 3 }
       },
       {
-        id: 'question-mark-icon',
+        id: 'badge-mcq',
         type: 'text',
-        x: 82, y: 168, width: 60, height: 60, rotation: 0, opacity: 1, locked: false, zIndex: 12,
-        textProps: { content: "?", fontSize: 64, fontFamily: fontTheme, color: textTheme, bold: true, align: 'center', glow: true }
+        x: 240, y: 30, width: 320, height: 55, rotation: 0, opacity: 1, locked: false, zIndex: 9,
+        textProps: { content: "MCQ", fontSize: 54, fontFamily: 'Outfit', color: '#ffffff', bold: true, align: 'center', glow: true }
       },
       {
-        id: 'question-text',
+        id: 'badge-quiz',
         type: 'text',
-        x: 140, y: 210, width: 520, height: 170, rotation: 0, opacity: 1, locked: false, zIndex: 13,
-        textProps: { content: question, fontSize: 18, fontFamily: fontTheme, color: textTheme, bold: true, align: 'center', isLaTeX: question.includes('\\') || question.includes('$') }
+        x: 240, y: 88, width: 320, height: 35, rotation: 0, opacity: 1, locked: false, zIndex: 10,
+        textProps: { content: "Quiz", fontSize: 28, fontFamily: 'Outfit', color: '#fbbf24', bold: true, align: 'center' }
       }
     );
-
-    const gridPos = [
-      { bx: 110, by: 440, tx: 130, ty: 458 },
-      { bx: 405, by: 440, tx: 425, ty: 458 },
-      { bx: 110, by: 530, tx: 130, ty: 548 },
-      { bx: 405, by: 530, tx: 425, ty: 548 }
-    ];
-
-    options.forEach((opt, idx) => {
-      const optionLetter = ['A', 'B', 'C', 'D'][idx];
-      const pos = gridPos[idx];
-      const isOptionB = idx === 1;
-
-      items.push({
-        id: `opt-${optionLetter.toLowerCase()}-bg`,
-        type: 'shape',
-        x: pos.bx, y: pos.by, width: 285, height: 65, rotation: 0, opacity: 1, locked: false, zIndex: 20 + idx * 2,
-        shapeProps: {
-          shapeType: 'rect',
-          fill: isOptionB ? (style === 'pastel' ? '#fb7185' : '#e11d48') : optFill,
-          stroke: isOptionB ? '' : optStroke,
-          strokeWidth: isOptionB ? 0 : 2
-        }
-      });
-
-      items.push({
-        id: `opt-${optionLetter.toLowerCase()}-text`,
+  } else {
+    // Standard branding headers
+    items.push(
+      {
+        id: 'brand-logo',
+        type: logo ? 'logo' : 'shape',
+        x: 350, y: 35, width: 100, height: 50, rotation: 0, opacity: 1, locked: false, zIndex: 8,
+        imageProps: logo ? { src: logo, blur: 0, brightness: 1, contrast: 1 } : undefined,
+        shapeProps: logo ? undefined : { shapeType: 'circle', fill: sc, stroke: '', strokeWidth: 0 }
+      },
+      {
+        id: 'brand-label',
         type: 'text',
-        x: pos.tx, y: pos.ty, width: 245, height: 30, rotation: 0, opacity: 1, locked: false, zIndex: 21 + idx * 2,
+        x: 100, y: 95, width: 600, height: 30, rotation: 0, opacity: 1, locked: false, zIndex: 9,
         textProps: {
-          content: `${optionLetter}) ${opt}`,
-          fontSize: 13,
+          content: brandName.toUpperCase(),
+          fontSize: 16,
           fontFamily: fontTheme,
-          color: isOptionB ? '#ffffff' : optTextTheme,
-          bold: isOptionB,
-          align: 'left',
-          isLaTeX: opt.includes('\\') || opt.includes('$')
+          color: textTheme === '#ffffff' ? '#e2e8f0' : textTheme,
+          bold: true,
+          align: 'center',
+          letterSpacing: 2.5
         }
-      });
-    });
+      },
+      {
+        id: 'subtitle-banner',
+        type: 'text',
+        x: 100, y: 130, width: 600, height: 30, rotation: 0, opacity: 1, locked: false, zIndex: 10,
+        textProps: {
+          content: "DAILY MCQ CHALLENGE",
+          fontSize: 22,
+          fontFamily: fontTheme,
+          color: sc,
+          bold: true,
+          align: 'center',
+          letterSpacing: 1.5,
+          glow: true
+        }
+      }
+    );
+  }
 
-    items.push({
-      id: 'footer-details',
-      type: 'text',
-      x: 100, y: 720, width: 600, height: 30, rotation: 0, opacity: 1, locked: false, zIndex: 40,
-      textProps: { content: `Join online: ${brandName} • Learn Today, Lead Tomorrow`, fontSize: 12, fontFamily: fontTheme, color: '#64748b', italic: true, align: 'center' }
-    });
+  // 4: Layout specific cards rendering
+  if (gridLayout) {
+    if (style === 'quiz-show') {
+      // PREMIUM QUIZ SHOW CARD
+      items.push(
+        {
+          id: 'question-card',
+          type: 'shape',
+          x: 80, y: 175, width: 640, height: 210, rotation: 0, opacity: 1, locked: false, zIndex: 11,
+          shapeProps: { shapeType: 'rect', fill: 'rgba(2, 4, 10, 0.75)', stroke: '#0066ff', strokeWidth: 3 }
+        },
+        {
+          id: 'question-text',
+          type: 'text',
+          x: 100, y: 200, width: 600, height: 160, rotation: 0, opacity: 1, locked: false, zIndex: 12,
+          textProps: {
+            content: question,
+            fontSize: 22,
+            fontFamily: fontTheme,
+            color: '#ffffff',
+            bold: true,
+            align: 'center',
+            isLaTeX: question.includes('\\') || question.includes('$')
+          }
+        }
+      );
+
+      const gridPos = [
+        { bx: 80, by: 420, tx: 170, ty: 448 },
+        { bx: 415, by: 420, tx: 505, ty: 448 },
+        { bx: 80, by: 525, tx: 170, ty: 553 },
+        { bx: 415, by: 525, tx: 505, ty: 553 }
+      ];
+
+      const optionLetters = isBangla ? ["ক", "খ", "গ", "ঘ"] : ["A", "B", "C", "D"];
+
+      options.forEach((opt, idx) => {
+        const letter = optionLetters[idx];
+        const pos = gridPos[idx];
+
+        // Card backing
+        items.push({
+          id: `opt-${idx}-bg`,
+          type: 'shape',
+          x: pos.bx, y: pos.by, width: 305, height: 80, rotation: 0, opacity: 1, locked: false, zIndex: 20 + idx * 4,
+          shapeProps: { shapeType: 'rect', fill: 'rgba(2, 4, 10, 0.5)', stroke: '#0066ff', strokeWidth: 2 }
+        });
+
+        // Circle Badge
+        items.push({
+          id: `opt-${idx}-circle`,
+          type: 'shape',
+          x: pos.bx + 15, y: pos.by + 18, width: 44, height: 44, rotation: 0, opacity: 1, locked: false, zIndex: 21 + idx * 4,
+          shapeProps: { shapeType: 'circle', fill: '#02040a', stroke: '#00e5ff', strokeWidth: 2 }
+        });
+
+        // Letter
+        items.push({
+          id: `opt-${idx}-letter`,
+          type: 'text',
+          x: pos.bx + 15, y: pos.by + 28, width: 44, height: 24, rotation: 0, opacity: 1, locked: false, zIndex: 22 + idx * 4,
+          textProps: { content: letter, fontSize: 18, fontFamily: fontTheme, color: '#fbbf24', bold: true, align: 'center' }
+        });
+
+        // Separator line
+        items.push({
+          id: `opt-${idx}-sep`,
+          type: 'shape',
+          x: pos.bx + 75, y: pos.by + 20, width: 2, height: 40, rotation: 0, opacity: 1, locked: false, zIndex: 23 + idx * 4,
+          shapeProps: { shapeType: 'rect', fill: 'rgba(255, 255, 255, 0.15)' }
+        });
+
+        // Option Content text
+        items.push({
+          id: `opt-${idx}-text`,
+          type: 'text',
+          x: pos.bx + 92, y: pos.by + 28, width: 200, height: 30, rotation: 0, opacity: 1, locked: false, zIndex: 24 + idx * 4,
+          textProps: { content: opt, fontSize: 16, fontFamily: fontTheme, color: '#ffffff', bold: true, align: 'left', isLaTeX: opt.includes('\\') || opt.includes('$') }
+        });
+      });
+
+      // Footer call-to-action with neon dots
+      items.push(
+        {
+          id: 'footer-details',
+          type: 'text',
+          x: 100, y: 730, width: 600, height: 30, rotation: 0, opacity: 1, locked: false, zIndex: 40,
+          textProps: { content: isBangla ? "সঠিক উত্তর কমেন্ট করো" : "COMMENT YOUR ANSWER BELOW", fontSize: 16, fontFamily: fontTheme, color: '#fbbf24', bold: true, align: 'center' }
+        },
+        {
+          id: 'footer-dot-l',
+          type: 'shape',
+          x: 230, y: 742, width: 8, height: 8, rotation: 0, opacity: 1, locked: false, zIndex: 41,
+          shapeProps: { shapeType: 'circle', fill: '#00e5ff' }
+        },
+        {
+          id: 'footer-dot-r',
+          type: 'shape',
+          x: 560, y: 742, width: 8, height: 8, rotation: 0, opacity: 1, locked: false, zIndex: 42,
+          shapeProps: { shapeType: 'circle', fill: '#00e5ff' }
+        }
+      );
+    } else {
+      // STANDARD GRID LAYOUT
+      items.push(
+        {
+          id: 'question-card',
+          type: 'shape',
+          x: 110, y: 190, width: 580, height: 210, rotation: 0, opacity: 1, locked: false, zIndex: 11,
+          shapeProps: { shapeType: 'rect', fill: 'rgba(255, 255, 255, 0.02)', stroke: sc, strokeWidth: 3 }
+        },
+        {
+          id: 'question-mark-icon',
+          type: 'text',
+          x: 82, y: 168, width: 60, height: 60, rotation: 0, opacity: 1, locked: false, zIndex: 12,
+          textProps: { content: "?", fontSize: 64, fontFamily: fontTheme, color: textTheme, bold: true, align: 'center', glow: true }
+        },
+        {
+          id: 'question-text',
+          type: 'text',
+          x: 140, y: 210, width: 520, height: 170, rotation: 0, opacity: 1, locked: false, zIndex: 13,
+          textProps: { content: question, fontSize: 18, fontFamily: fontTheme, color: textTheme, bold: true, align: 'center', isLaTeX: question.includes('\\') || question.includes('$') }
+        }
+      );
+
+      const gridPos = [
+        { bx: 110, by: 440, tx: 130, ty: 458 },
+        { bx: 405, by: 440, tx: 425, ty: 458 },
+        { bx: 110, by: 530, tx: 130, ty: 548 },
+        { bx: 405, by: 530, tx: 425, ty: 548 }
+      ];
+
+      options.forEach((opt, idx) => {
+        const optionLetter = ['A', 'B', 'C', 'D'][idx];
+        const pos = gridPos[idx];
+        const isOptionB = idx === 1;
+
+        items.push({
+          id: `opt-${optionLetter.toLowerCase()}-bg`,
+          type: 'shape',
+          x: pos.bx, y: pos.by, width: 285, height: 65, rotation: 0, opacity: 1, locked: false, zIndex: 20 + idx * 2,
+          shapeProps: {
+            shapeType: 'rect',
+            fill: isOptionB ? (style === 'pastel' ? '#fb7185' : '#e11d48') : optFill,
+            stroke: isOptionB ? '' : optStroke,
+            strokeWidth: isOptionB ? 0 : 2
+          }
+        });
+
+        items.push({
+          id: `opt-${optionLetter.toLowerCase()}-text`,
+          type: 'text',
+          x: pos.tx, y: pos.ty, width: 245, height: 30, rotation: 0, opacity: 1, locked: false, zIndex: 21 + idx * 2,
+          textProps: {
+            content: `${optionLetter}) ${opt}`,
+            fontSize: 13,
+            fontFamily: fontTheme,
+            color: isOptionB ? '#ffffff' : optTextTheme,
+            bold: isOptionB,
+            align: 'left',
+            isLaTeX: opt.includes('\\') || opt.includes('$')
+          }
+        });
+      });
+
+      items.push({
+        id: 'footer-details',
+        type: 'text',
+        x: 100, y: 720, width: 600, height: 30, rotation: 0, opacity: 1, locked: false, zIndex: 40,
+        textProps: { content: `Join online: ${brandName} • Learn Today, Lead Tomorrow`, fontSize: 12, fontFamily: fontTheme, color: '#64748b', italic: true, align: 'center' }
+      });
+    }
   } else {
     // STACKED VERTICAL LAYOUT RENDERING
     let currentY = 185;
