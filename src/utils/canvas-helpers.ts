@@ -289,3 +289,189 @@ export const getQRCodeUrl = (data: string, color: string = '000000'): string => 
   const cleanColor = color.replace('#', '');
   return `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(data)}&color=${cleanColor}&bgcolor=ffffff`;
 };
+
+// Smart AI MCQ Layout Compiler
+// Computes sizes, coordinates, spacing, and stacks options vertically to avoid overlaps
+export const calculatePremiumMCQLayout = (
+  question: string,
+  options: string[],
+  brandName: string,
+  primaryColor: string,
+  secondaryColor: string,
+  logoUrl: string
+): { items: any[]; height: number } => {
+  const width = 800;
+  let currentY = 180;
+  
+  // Dynamic line calculations for question
+  const charLimit = 40;
+  const questionLines = Math.ceil(question.length / charLimit);
+  const questionHeight = Math.max(80, questionLines * 26 + 20);
+
+  const items: any[] = [
+    // Background base
+    {
+      id: 'bg-rect',
+      type: 'shape',
+      x: 0, y: 0, width: 800, height: 800, rotation: 0, opacity: 1, locked: true, zIndex: 1,
+      shapeProps: { shapeType: 'rect', fill: '#0a0d17', stroke: primaryColor, strokeWidth: 5 }
+    },
+    // Header brand logo
+    {
+      id: 'brand-logo',
+      type: logoUrl ? 'logo' : 'shape',
+      x: 350, y: 35, width: 100, height: 50, rotation: 0, opacity: 1, locked: false, zIndex: 2,
+      imageProps: logoUrl ? { src: logoUrl, blur: 0, brightness: 1, contrast: 1 } : undefined,
+      shapeProps: logoUrl ? undefined : { shapeType: 'circle', fill: secondaryColor, stroke: '', strokeWidth: 0 }
+    },
+    // Institutional label
+    {
+      id: 'brand-label',
+      type: 'text',
+      x: 100, y: 95, width: 600, height: 30, rotation: 0, opacity: 1, locked: false, zIndex: 3,
+      textProps: {
+        content: brandName.toUpperCase(),
+        fontSize: 16,
+        fontFamily: 'Outfit',
+        color: '#e2e8f0',
+        bold: true,
+        italic: false,
+        underline: false,
+        align: 'center',
+        letterSpacing: 2.5,
+        lineHeight: 1.2,
+        glow: false,
+        shadow: ''
+      }
+    },
+    // Sub-header banner
+    {
+      id: 'subtitle-banner',
+      type: 'text',
+      x: 100, y: 130, width: 600, height: 35, rotation: 0, opacity: 1, locked: false, zIndex: 4,
+      textProps: {
+        content: "DAILY MCQ QUIZ",
+        fontSize: 22,
+        fontFamily: 'Outfit',
+        color: secondaryColor,
+        bold: true,
+        italic: false,
+        underline: false,
+        align: 'center',
+        letterSpacing: 1.5,
+        lineHeight: 1.2,
+        glow: true,
+        shadow: ''
+      }
+    },
+    // Translucent card behind question
+    {
+      id: 'question-card',
+      type: 'shape',
+      x: 80, y: currentY, width: 640, height: questionHeight, rotation: 0, opacity: 1, locked: false, zIndex: 5,
+      shapeProps: { shapeType: 'rect', fill: 'rgba(255, 255, 255, 0.02)', stroke: 'rgba(255, 255, 255, 0.05)', strokeWidth: 1 }
+    },
+    // Question Text Node
+    {
+      id: 'question-text',
+      type: 'text',
+      x: 100, y: currentY + 12, width: 600, height: questionHeight - 24, rotation: 0, opacity: 1, locked: false, zIndex: 6,
+      textProps: {
+        content: question,
+        fontSize: 20,
+        fontFamily: 'Outfit',
+        color: '#ffffff',
+        bold: true,
+        italic: false,
+        underline: false,
+        align: 'center',
+        letterSpacing: 0,
+        lineHeight: 1.4,
+        glow: false,
+        shadow: '',
+        isLaTeX: question.includes('\\') || question.includes('$')
+      }
+    }
+  ];
+
+  // Advance vertical space
+  currentY += questionHeight + 35;
+
+  // Stacking options vertically
+  options.forEach((opt, idx) => {
+    const optionLetter = ['A', 'B', 'C', 'D'][idx];
+    const isLaTeX = opt.includes('\\') || opt.includes('$');
+    const optLines = Math.ceil(opt.length / 50);
+    const optHeight = Math.max(55, optLines * 22 + 16);
+
+    // Option background box
+    items.push({
+      id: `opt-${optionLetter.toLowerCase()}-bg`,
+      type: 'shape',
+      x: 80, y: currentY, width: 640, height: optHeight, rotation: 0, opacity: 1, locked: false, zIndex: 7 + idx * 2,
+      shapeProps: { 
+        shapeType: 'rect', 
+        fill: idx === 0 ? 'rgba(59, 130, 246, 0.05)' : 'rgba(255, 255, 255, 0.01)', 
+        stroke: idx === 0 ? primaryColor : 'rgba(255, 255, 255, 0.08)', 
+        strokeWidth: idx === 0 ? 1.5 : 1 
+      }
+    });
+
+    // Option text content
+    items.push({
+      id: `opt-${optionLetter.toLowerCase()}-text`,
+      type: 'text',
+      x: 100, y: currentY + (optHeight - 20) / 2 - 2, width: 600, height: 26, rotation: 0, opacity: 1, locked: false, zIndex: 8 + idx * 2,
+      textProps: {
+        content: `${optionLetter}) ${opt}`,
+        fontSize: 14,
+        fontFamily: 'Inter',
+        color: '#cbd5e1',
+        bold: idx === 0,
+        italic: false,
+        underline: false,
+        align: 'left',
+        letterSpacing: 0.5,
+        lineHeight: 1.2,
+        glow: false,
+        shadow: '',
+        isLaTeX
+      }
+    });
+
+    currentY += optHeight + 15;
+  });
+
+  // Space for footer brand details
+  currentY += 20;
+
+  // Footer text
+  items.push({
+    id: 'footer-details',
+    type: 'text',
+    x: 100, y: currentY, width: 600, height: 30, rotation: 0, opacity: 1, locked: false, zIndex: 20,
+    textProps: {
+      content: `Join online: ${brandName} • Learn Today, Lead Tomorrow`,
+      fontSize: 12,
+      fontFamily: 'Inter',
+      color: '#64748b',
+      bold: false,
+      italic: true,
+      underline: false,
+      align: 'center',
+      letterSpacing: 0.5,
+      lineHeight: 1.2,
+      glow: false,
+      shadow: ''
+    }
+  });
+
+  currentY += 50; // Extra padding at bottom
+  const finalCanvasHeight = Math.max(800, currentY);
+
+  // Update background base height if it expanded past 800px
+  items[0].width = width;
+  items[0].height = finalCanvasHeight;
+
+  return { items, height: finalCanvasHeight };
+};

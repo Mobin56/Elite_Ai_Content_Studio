@@ -5,6 +5,7 @@ import { useAppStore, Project } from '@/store/useAppStore';
 import { useEditorStore, CanvasItem } from '@/store/useEditorStore';
 import { useBrandStore } from '@/store/useBrandStore';
 import { Layers, Search, Bookmark, ArrowRight } from 'lucide-react';
+import { calculatePremiumMCQLayout } from '@/utils/canvas-helpers';
 
 interface PresetTemplate {
   name: string;
@@ -20,166 +21,16 @@ const PRESET_TEMPLATES: PresetTemplate[] = [
     name: "Daily MCQ Contest Post",
     category: "MCQ",
     width: 800,
-    height: 800,
+    height: 900,
     description: "Square post template optimized for sharing MCQ contests on Facebook, LinkedIn, or WhatsApp.",
-    createItems: (brand, primary, secondary, logo) => [
-      // Background base
-      {
-        id: 'bg-rect',
-        type: 'shape',
-        x: 0, y: 0, width: 800, height: 800, rotation: 0, opacity: 1, locked: true, zIndex: 1,
-        shapeProps: { shapeType: 'rect', fill: '#0b0f19', stroke: primary, strokeWidth: 4 }
-      },
-      // Decorative circles
-      {
-        id: 'dec-circle-1',
-        type: 'shape',
-        x: -100, y: -100, width: 400, height: 400, rotation: 0, opacity: 0.15, locked: false, zIndex: 2,
-        shapeProps: { shapeType: 'circle', fill: primary, stroke: '', strokeWidth: 0 }
-      },
-      // Logo placeholder
-      {
-        id: 'brand-logo',
-        type: logo ? 'logo' : 'shape',
-        x: 350, y: 40, width: 100, height: 60, rotation: 0, opacity: 1, locked: false, zIndex: 3,
-        imageProps: logo ? { src: logo, blur: 0, brightness: 1, contrast: 1 } : undefined,
-        shapeProps: logo ? undefined : { shapeType: 'rect', fill: secondary, stroke: '', strokeWidth: 0 }
-      },
-      // Institution title
-      {
-        id: 'inst-title',
-        type: 'text',
-        x: 100, y: 110, width: 600, height: 35, rotation: 0, opacity: 1, locked: false, zIndex: 4,
-        textProps: {
-          content: brand.toUpperCase(),
-          fontSize: 16,
-          fontFamily: 'Outfit',
-          color: '#e2e8f0',
-          bold: true,
-          italic: false,
-          underline: false,
-          align: 'center',
-          letterSpacing: 2,
-          lineHeight: 1.2,
-          glow: false,
-          shadow: ''
-        }
-      },
-      // Contest title
-      {
-        id: 'contest-title',
-        type: 'text',
-        x: 100, y: 145, width: 600, height: 60, rotation: 0, opacity: 1, locked: false, zIndex: 5,
-        textProps: {
-          content: "DAILY MCQ CHALLENGE",
-          fontSize: 32,
-          fontFamily: 'Outfit',
-          color: primary,
-          bold: true,
-          italic: false,
-          underline: false,
-          align: 'center',
-          letterSpacing: 1,
-          lineHeight: 1.2,
-          glow: true,
-          shadow: ''
-        }
-      },
-      // Question block
-      {
-        id: 'question-text',
-        type: 'text',
-        x: 80, y: 240, width: 640, height: 120, rotation: 0, opacity: 1, locked: false, zIndex: 6,
-        textProps: {
-          content: "What is the result of evaluating the derivative:\n\\frac{d}{dx} (x^2 \\sin(x))?",
-          fontSize: 22,
-          fontFamily: 'Outfit',
-          color: '#ffffff',
-          bold: true,
-          italic: false,
-          underline: false,
-          align: 'center',
-          letterSpacing: 0,
-          lineHeight: 1.4,
-          glow: false,
-          shadow: '',
-          isLaTeX: true
-        }
-      },
-      // MCQ Options rectangles & text
-      {
-        id: 'opt-a-box',
-        type: 'shape',
-        x: 100, y: 400, width: 280, height: 60, rotation: 0, opacity: 1, locked: false, zIndex: 7,
-        shapeProps: { shapeType: 'rect', fill: 'rgba(255,255,255,0.05)', stroke: primary, strokeWidth: 1.5 }
-      },
-      {
-        id: 'opt-a-text',
-        type: 'text',
-        x: 120, y: 418, width: 240, height: 30, rotation: 0, opacity: 1, locked: false, zIndex: 8,
-        textProps: {
-          content: "A) 2x \\sin(x) + x^2 \\cos(x)",
-          fontSize: 14,
-          fontFamily: 'Inter',
-          color: '#e2e8f0',
-          bold: true,
-          italic: false,
-          underline: false,
-          align: 'left',
-          letterSpacing: 0,
-          lineHeight: 1.2,
-          glow: false,
-          shadow: '',
-          isLaTeX: true
-        }
-      },
-      {
-        id: 'opt-b-box',
-        type: 'shape',
-        x: 420, y: 400, width: 280, height: 60, rotation: 0, opacity: 1, locked: false, zIndex: 9,
-        shapeProps: { shapeType: 'rect', fill: 'rgba(255,255,255,0.05)', stroke: 'rgba(255,255,255,0.1)', strokeWidth: 1 }
-      },
-      {
-        id: 'opt-b-text',
-        type: 'text',
-        x: 440, y: 418, width: 240, height: 30, rotation: 0, opacity: 1, locked: false, zIndex: 10,
-        textProps: {
-          content: "B) 2x \\cos(x)",
-          fontSize: 14,
-          fontFamily: 'Inter',
-          color: '#cbd5e1',
-          bold: false,
-          italic: false,
-          underline: false,
-          align: 'left',
-          letterSpacing: 0,
-          lineHeight: 1.2,
-          glow: false,
-          shadow: '',
-          isLaTeX: true
-        }
-      },
-      // Footer text
-      {
-        id: 'footer-brand',
-        type: 'text',
-        x: 100, y: 720, width: 600, height: 30, rotation: 0, opacity: 1, locked: false, zIndex: 11,
-        textProps: {
-          content: "Comment your answers below! • Powered by Elite Studio",
-          fontSize: 12,
-          fontFamily: 'Inter',
-          color: '#64748b',
-          bold: false,
-          italic: true,
-          underline: false,
-          align: 'center',
-          letterSpacing: 0.5,
-          lineHeight: 1.2,
-          glow: false,
-          shadow: ''
-        }
-      }
-    ]
+    createItems: (brand, primary, secondary, logo) => calculatePremiumMCQLayout(
+      "What is the result of evaluating the derivative:\n\\frac{d}{dx} (x^2 \\sin(x))?",
+      ["2x \\sin(x) + x^2 \\cos(x)", "2x \\cos(x)", "x^2 \\cos(x) - 2x", "None of these"],
+      brand,
+      primary,
+      secondary,
+      logo
+    ).items
   },
   {
     name: "Admission Open Flyer",

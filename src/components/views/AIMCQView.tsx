@@ -5,6 +5,7 @@ import { useAppStore, Project } from '@/store/useAppStore';
 import { useEditorStore, CanvasItem } from '@/store/useEditorStore';
 import { useBrandStore } from '@/store/useBrandStore';
 import { generateMCQ, MCQQuestion } from '@/utils/ai';
+import { calculatePremiumMCQLayout } from '@/utils/canvas-helpers';
 import { Sparkles, Brain, CheckCircle, RefreshCw, Send, Check } from 'lucide-react';
 
 export default function AIMCQView() {
@@ -45,235 +46,27 @@ export default function AIMCQView() {
   const handleExportToCanvas = () => {
     if (!result) return;
     
-    // Construct Canvas Items dynamically
-    const primary = brandKit.primaryColor;
-    const secondary = brandKit.secondaryColor;
     const logoUrl = brandKit.logos.length > 0 ? brandKit.logos[0] : '';
-
-    const items: CanvasItem[] = [
-      // Base bg
-      {
-        id: 'bg-rect',
-        type: 'shape',
-        x: 0, y: 0, width: 800, height: 800, rotation: 0, opacity: 1, locked: true, zIndex: 1,
-        shapeProps: { shapeType: 'rect', fill: '#0a0b10', stroke: primary, strokeWidth: 4 }
-      },
-      // Header brand logo
-      {
-        id: 'brand-logo',
-        type: logoUrl ? 'logo' : 'shape',
-        x: 350, y: 35, width: 100, height: 50, rotation: 0, opacity: 1, locked: false, zIndex: 2,
-        imageProps: logoUrl ? { src: logoUrl, blur: 0, brightness: 1, contrast: 1 } : undefined,
-        shapeProps: logoUrl ? undefined : { shapeType: 'rect', fill: secondary, stroke: '', strokeWidth: 0 }
-      },
-      // Subject category label
-      {
-        id: 'subject-tag-box',
-        type: 'shape',
-        x: 340, y: 100, width: 120, height: 30, rotation: 0, opacity: 1, locked: false, zIndex: 3,
-        shapeProps: { shapeType: 'rect', fill: primary, stroke: '', strokeWidth: 0 }
-      },
-      {
-        id: 'subject-tag-text',
-        type: 'text',
-        x: 340, y: 115, width: 120, height: 20, rotation: 0, opacity: 1, locked: false, zIndex: 4,
-        textProps: {
-          content: subject.toUpperCase(),
-          fontSize: 11,
-          fontFamily: 'Outfit',
-          color: '#ffffff',
-          bold: true,
-          italic: false,
-          underline: false,
-          align: 'center',
-          letterSpacing: 2,
-          lineHeight: 1.2,
-          glow: false,
-          shadow: ''
-        }
-      },
-      // Header subtitle
-      {
-        id: 'header-tag',
-        type: 'text',
-        x: 100, y: 145, width: 600, height: 40, rotation: 0, opacity: 1, locked: false, zIndex: 5,
-        textProps: {
-          content: `${className.toUpperCase()} • LEVEL: ${difficulty.toUpperCase()}`,
-          fontSize: 12,
-          fontFamily: 'Inter',
-          color: '#cbd5e1',
-          bold: true,
-          italic: false,
-          underline: false,
-          align: 'center',
-          letterSpacing: 1.5,
-          lineHeight: 1.2,
-          glow: false,
-          shadow: ''
-        }
-      },
-      // Question block
-      {
-        id: 'question-node',
-        type: 'text',
-        x: 70, y: 220, width: 660, height: 140, rotation: 0, opacity: 1, locked: false, zIndex: 6,
-        textProps: {
-          content: result.question,
-          fontSize: 22,
-          fontFamily: 'Outfit',
-          color: '#ffffff',
-          bold: true,
-          italic: false,
-          underline: false,
-          align: 'center',
-          letterSpacing: 0,
-          lineHeight: 1.4,
-          glow: false,
-          shadow: '',
-          isLaTeX: result.question.includes('\\') || result.question.includes('$')
-        }
-      },
-      // Option A
-      {
-        id: 'opt-a-bg',
-        type: 'shape',
-        x: 80, y: 400, width: 300, height: 70, rotation: 0, opacity: 1, locked: false, zIndex: 7,
-        shapeProps: { shapeType: 'rect', fill: 'rgba(255,255,255,0.03)', stroke: primary, strokeWidth: 1.5 }
-      },
-      {
-        id: 'opt-a-txt',
-        type: 'text',
-        x: 100, y: 422, width: 260, height: 35, rotation: 0, opacity: 1, locked: false, zIndex: 8,
-        textProps: {
-          content: `A) ${result.options[0]}`,
-          fontSize: 14,
-          fontFamily: 'Inter',
-          color: '#f8fafc',
-          bold: true,
-          italic: false,
-          underline: false,
-          align: 'left',
-          letterSpacing: 0,
-          lineHeight: 1.2,
-          glow: false,
-          shadow: '',
-          isLaTeX: result.options[0].includes('\\')
-        }
-      },
-      // Option B
-      {
-        id: 'opt-b-bg',
-        type: 'shape',
-        x: 420, y: 400, width: 300, height: 70, rotation: 0, opacity: 1, locked: false, zIndex: 9,
-        shapeProps: { shapeType: 'rect', fill: 'rgba(255,255,255,0.03)', stroke: 'rgba(255,255,255,0.1)', strokeWidth: 1 }
-      },
-      {
-        id: 'opt-b-txt',
-        type: 'text',
-        x: 440, y: 422, width: 260, height: 35, rotation: 0, opacity: 1, locked: false, zIndex: 10,
-        textProps: {
-          content: `B) ${result.options[1]}`,
-          fontSize: 14,
-          fontFamily: 'Inter',
-          color: '#cbd5e1',
-          bold: false,
-          italic: false,
-          underline: false,
-          align: 'left',
-          letterSpacing: 0,
-          lineHeight: 1.2,
-          glow: false,
-          shadow: '',
-          isLaTeX: result.options[1].includes('\\')
-        }
-      },
-      // Option C
-      {
-        id: 'opt-c-bg',
-        type: 'shape',
-        x: 80, y: 500, width: 300, height: 70, rotation: 0, opacity: 1, locked: false, zIndex: 11,
-        shapeProps: { shapeType: 'rect', fill: 'rgba(255,255,255,0.03)', stroke: 'rgba(255,255,255,0.1)', strokeWidth: 1 }
-      },
-      {
-        id: 'opt-c-txt',
-        type: 'text',
-        x: 100, y: 522, width: 260, height: 35, rotation: 0, opacity: 1, locked: false, zIndex: 12,
-        textProps: {
-          content: `C) ${result.options[2]}`,
-          fontSize: 14,
-          fontFamily: 'Inter',
-          color: '#cbd5e1',
-          bold: false,
-          italic: false,
-          underline: false,
-          align: 'left',
-          letterSpacing: 0,
-          lineHeight: 1.2,
-          glow: false,
-          shadow: '',
-          isLaTeX: result.options[2].includes('\\')
-        }
-      },
-      // Option D
-      {
-        id: 'opt-d-bg',
-        type: 'shape',
-        x: 420, y: 500, width: 300, height: 70, rotation: 0, opacity: 1, locked: false, zIndex: 13,
-        shapeProps: { shapeType: 'rect', fill: 'rgba(255,255,255,0.03)', stroke: 'rgba(255,255,255,0.1)', strokeWidth: 1 }
-      },
-      {
-        id: 'opt-d-txt',
-        type: 'text',
-        x: 440, y: 522, width: 260, height: 35, rotation: 0, opacity: 1, locked: false, zIndex: 14,
-        textProps: {
-          content: `D) ${result.options[3]}`,
-          fontSize: 14,
-          fontFamily: 'Inter',
-          color: '#cbd5e1',
-          bold: false,
-          italic: false,
-          underline: false,
-          align: 'left',
-          letterSpacing: 0,
-          lineHeight: 1.2,
-          glow: false,
-          shadow: '',
-          isLaTeX: result.options[3].includes('\\')
-        }
-      },
-      // Footer URL / website
-      {
-        id: 'footer-web',
-        type: 'text',
-        x: 100, y: 720, width: 600, height: 30, rotation: 0, opacity: 1, locked: false, zIndex: 15,
-        textProps: {
-          content: `Practice online at: ${brandKit.website || 'eliteschool.edu'}`,
-          fontSize: 13,
-          fontFamily: 'Inter',
-          color: secondary,
-          bold: true,
-          italic: false,
-          underline: false,
-          align: 'center',
-          letterSpacing: 0.5,
-          lineHeight: 1.2,
-          glow: false,
-          shadow: ''
-        }
-      }
-    ];
+    const { items, height } = calculatePremiumMCQLayout(
+      result.question,
+      result.options,
+      brandKit.brandName,
+      brandKit.primaryColor,
+      brandKit.secondaryColor,
+      logoUrl
+    );
 
     const projectTemplateId = `project-mcq-${Date.now()}`;
     const newProject = {
       id: projectTemplateId,
       name: `AI MCQ - ${subject}`,
       canvasWidth: 800,
-      canvasHeight: 800,
+      canvasHeight: height,
       items
     };
 
     saveProject(newProject);
-    loadDesign(items, 800, 800);
+    loadDesign(items, 800, height);
     setCurrentProject(projectTemplateId);
     setView('editor');
   };
