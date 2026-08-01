@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppStore } from '@/store/useAppStore';
 import Header from '@/components/shared/Header';
 import Sidebar from '@/components/shared/Sidebar';
@@ -17,16 +17,37 @@ import SettingsView from '@/components/views/SettingsView';
 
 export default function Home() {
   const { activeView, theme } = useAppStore();
+  const [mounted, setMounted] = useState(false);
+
+  // Set mounted true on client
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Apply dark mode class directly on document HTML
   useEffect(() => {
+    if (!mounted) return;
     const root = window.document.documentElement;
     if (theme === 'dark') {
       root.classList.add('dark');
     } else {
       root.classList.remove('dark');
     }
-  }, [theme]);
+  }, [theme, mounted]);
+
+  if (!mounted) {
+    // Premium loading spinner to prevent hydration mismatches
+    return (
+      <div className="min-h-screen bg-[#030712] flex flex-col items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-cyan-400 animate-spin mx-auto shadow-lg shadow-indigo-500/20" />
+          <p className="text-[10px] font-bold text-slate-400 font-mono tracking-widest uppercase animate-pulse">
+            Studio Workspace Hydrating...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   const renderActiveView = () => {
     switch (activeView) {
