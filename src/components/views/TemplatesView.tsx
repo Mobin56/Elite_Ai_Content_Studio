@@ -5,7 +5,7 @@ import { useAppStore, Project } from '@/store/useAppStore';
 import { useEditorStore, CanvasItem } from '@/store/useEditorStore';
 import { useBrandStore } from '@/store/useBrandStore';
 import { Layers, Search, Bookmark, ArrowRight } from 'lucide-react';
-import { calculatePremiumMCQLayout } from '@/utils/canvas-helpers';
+import { calculatePremiumMCQLayout, calculateQuizizzGridMCQLayout } from '@/utils/canvas-helpers';
 
 interface PresetTemplate {
   name: string;
@@ -24,6 +24,21 @@ const PRESET_TEMPLATES: PresetTemplate[] = [
     height: 900,
     description: "Square post template optimized for sharing MCQ contests on Facebook, LinkedIn, or WhatsApp.",
     createItems: (brand, primary, secondary, logo) => calculatePremiumMCQLayout(
+      "What is the result of evaluating the derivative:\n\\frac{d}{dx} (x^2 \\sin(x))?",
+      ["2x \\sin(x) + x^2 \\cos(x)", "2x \\cos(x)", "x^2 \\cos(x) - 2x", "None of these"],
+      brand,
+      primary,
+      secondary,
+      logo
+    ).items
+  },
+  {
+    name: "Quizizz MCQ Grid Post",
+    category: "MCQ",
+    width: 800,
+    height: 800,
+    description: "2x2 option grids with a large question card above. Mimics premium Quizizz layouts.",
+    createItems: (brand, primary, secondary, logo) => calculateQuizizzGridMCQLayout(
       "What is the result of evaluating the derivative:\n\\frac{d}{dx} (x^2 \\sin(x))?",
       ["2x \\sin(x) + x^2 \\cos(x)", "2x \\cos(x)", "x^2 \\cos(x) - 2x", "None of these"],
       brand,

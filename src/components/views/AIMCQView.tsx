@@ -5,7 +5,7 @@ import { useAppStore, Project } from '@/store/useAppStore';
 import { useEditorStore, CanvasItem } from '@/store/useEditorStore';
 import { useBrandStore } from '@/store/useBrandStore';
 import { generateMCQ, MCQQuestion } from '@/utils/ai';
-import { calculatePremiumMCQLayout } from '@/utils/canvas-helpers';
+import { calculatePremiumMCQLayout, calculateQuizizzGridMCQLayout } from '@/utils/canvas-helpers';
 import { Sparkles, Brain, CheckCircle, RefreshCw, Send, Check } from 'lucide-react';
 
 export default function AIMCQView() {
@@ -17,6 +17,7 @@ export default function AIMCQView() {
   const [className, setClassName] = useState('HSC / College');
   const [difficulty, setDifficulty] = useState('Medium');
   const [language, setLanguage] = useState('English');
+  const [layoutStyle, setLayoutStyle] = useState<'stacked' | 'grid'>('stacked');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<MCQQuestion | null>(null);
 
@@ -47,14 +48,23 @@ export default function AIMCQView() {
     if (!result) return;
     
     const logoUrl = brandKit.logos.length > 0 ? brandKit.logos[0] : '';
-    const { items, height } = calculatePremiumMCQLayout(
-      result.question,
-      result.options,
-      brandKit.brandName,
-      brandKit.primaryColor,
-      brandKit.secondaryColor,
-      logoUrl
-    );
+    const { items, height } = layoutStyle === 'grid'
+      ? calculateQuizizzGridMCQLayout(
+          result.question,
+          result.options,
+          brandKit.brandName,
+          brandKit.primaryColor,
+          brandKit.secondaryColor,
+          logoUrl
+        )
+      : calculatePremiumMCQLayout(
+          result.question,
+          result.options,
+          brandKit.brandName,
+          brandKit.primaryColor,
+          brandKit.secondaryColor,
+          logoUrl
+        );
 
     const projectTemplateId = `project-mcq-${Date.now()}`;
     const newProject = {
@@ -155,6 +165,18 @@ export default function AIMCQView() {
             >
               <option value="English">English</option>
               <option value="Bangla">Bangla (বাংলা)</option>
+            </select>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold text-slate-400">MCQ Canvas Layout</label>
+            <select
+              value={layoutStyle}
+              onChange={(e: any) => setLayoutStyle(e.target.value)}
+              className="w-full px-3 py-2 text-sm rounded-lg glass-input text-foreground font-sans"
+            >
+              <option value="stacked">Vertical Stack (Spacious)</option>
+              <option value="grid">2x2 Grid (Quizizz Style)</option>
             </select>
           </div>
 

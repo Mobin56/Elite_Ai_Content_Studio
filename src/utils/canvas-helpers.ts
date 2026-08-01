@@ -475,3 +475,200 @@ export const calculatePremiumMCQLayout = (
 
   return { items, height: finalCanvasHeight };
 };
+
+// Quizizz Style 2x2 Grid Layout Compiler
+// Renders question card with white "?" icon, option grids (Option B highlighted in crimson)
+export const calculateQuizizzGridMCQLayout = (
+  question: string,
+  options: string[],
+  brandName: string,
+  primaryColor: string,
+  secondaryColor: string,
+  logoUrl: string
+): { items: any[]; height: number } => {
+  const width = 800;
+  const height = 800;
+  
+  const items: any[] = [
+    // Background base
+    {
+      id: 'bg-rect',
+      type: 'shape',
+      x: 0, y: 0, width: 800, height: 800, rotation: 0, opacity: 1, locked: true, zIndex: 1,
+      shapeProps: { shapeType: 'rect', fill: '#0a0d17', stroke: primaryColor, strokeWidth: 5 }
+    },
+    // Header brand logo
+    {
+      id: 'brand-logo',
+      type: logoUrl ? 'logo' : 'shape',
+      x: 350, y: 35, width: 100, height: 50, rotation: 0, opacity: 1, locked: false, zIndex: 2,
+      imageProps: logoUrl ? { src: logoUrl, blur: 0, brightness: 1, contrast: 1 } : undefined,
+      shapeProps: logoUrl ? undefined : { shapeType: 'circle', fill: secondaryColor, stroke: '', strokeWidth: 0 }
+    },
+    // Brand title
+    {
+      id: 'brand-label',
+      type: 'text',
+      x: 100, y: 95, width: 600, height: 30, rotation: 0, opacity: 1, locked: false, zIndex: 3,
+      textProps: {
+        content: brandName.toUpperCase(),
+        fontSize: 16,
+        fontFamily: 'Outfit',
+        color: '#e2e8f0',
+        bold: true,
+        italic: false,
+        underline: false,
+        align: 'center',
+        letterSpacing: 2.5,
+        lineHeight: 1.2,
+        glow: false,
+        shadow: ''
+      }
+    },
+    // Subtitle banner
+    {
+      id: 'subtitle-banner',
+      type: 'text',
+      x: 100, y: 130, width: 600, height: 30, rotation: 0, opacity: 1, locked: false, zIndex: 4,
+      textProps: {
+        content: "DAILY MCQ CHALLENGE",
+        fontSize: 22,
+        fontFamily: 'Outfit',
+        color: secondaryColor,
+        bold: true,
+        italic: false,
+        underline: false,
+        align: 'center',
+        letterSpacing: 1.5,
+        lineHeight: 1.2,
+        glow: true,
+        shadow: ''
+      }
+    },
+    // The large question card
+    {
+      id: 'question-card',
+      type: 'shape',
+      x: 110, y: 190, width: 580, height: 210, rotation: 0, opacity: 1, locked: false, zIndex: 5,
+      shapeProps: { 
+        shapeType: 'rect', 
+        fill: 'transparent', 
+        stroke: secondaryColor, 
+        strokeWidth: 3 
+      }
+    },
+    // Overlay white "?" icon
+    {
+      id: 'question-mark-icon',
+      type: 'text',
+      x: 82, y: 168, width: 60, height: 60, rotation: 0, opacity: 1, locked: false, zIndex: 6,
+      textProps: {
+        content: "?",
+        fontSize: 64,
+        fontFamily: 'Outfit',
+        color: '#ffffff',
+        bold: true,
+        italic: false,
+        underline: false,
+        align: 'center',
+        letterSpacing: 0,
+        lineHeight: 1,
+        glow: true,
+        shadow: ''
+      }
+    },
+    // Question text inside the card
+    {
+      id: 'question-text',
+      type: 'text',
+      x: 140, y: 210, width: 520, height: 170, rotation: 0, opacity: 1, locked: false, zIndex: 7,
+      textProps: {
+        content: question,
+        fontSize: 18,
+        fontFamily: 'Outfit',
+        color: '#ffffff',
+        bold: true,
+        italic: false,
+        underline: false,
+        align: 'center',
+        letterSpacing: 0,
+        lineHeight: 1.4,
+        glow: false,
+        shadow: '',
+        isLaTeX: question.includes('\\') || question.includes('$')
+      }
+    }
+  ];
+
+  // Option coordinates for 2x2 grid
+  const optionsPos = [
+    { bx: 110, by: 440, tx: 130, ty: 458 }, // A
+    { bx: 405, by: 440, tx: 425, ty: 458 }, // B
+    { bx: 110, by: 530, tx: 130, ty: 548 }, // C
+    { bx: 405, by: 530, tx: 425, ty: 548 }  // D
+  ];
+
+  options.forEach((opt, idx) => {
+    const optionLetter = ['A', 'B', 'C', 'D'][idx];
+    const pos = optionsPos[idx];
+    const isLaTeX = opt.includes('\\') || opt.includes('$');
+    
+    const isOptionB = idx === 1;
+
+    items.push({
+      id: `opt-${optionLetter.toLowerCase()}-bg`,
+      type: 'shape',
+      x: pos.bx, y: pos.by, width: 285, height: 65, rotation: 0, opacity: 1, locked: false, zIndex: 10 + idx * 2,
+      shapeProps: {
+        shapeType: 'rect',
+        fill: isOptionB ? '#e11d48' : 'transparent', // Solid crimson for B
+        stroke: isOptionB ? '' : secondaryColor,
+        strokeWidth: isOptionB ? 0 : 2
+      }
+    });
+
+    items.push({
+      id: `opt-${optionLetter.toLowerCase()}-text`,
+      type: 'text',
+      x: pos.tx, y: pos.ty, width: 245, height: 30, rotation: 0, opacity: 1, locked: false, zIndex: 11 + idx * 2,
+      textProps: {
+        content: `${optionLetter}) ${opt}`,
+        fontSize: 13,
+        fontFamily: 'Inter',
+        color: '#ffffff',
+        bold: isOptionB,
+        italic: false,
+        underline: false,
+        align: 'left',
+        letterSpacing: 0.5,
+        lineHeight: 1.2,
+        glow: false,
+        shadow: '',
+        isLaTeX
+      }
+    });
+  });
+
+  // Footer text
+  items.push({
+    id: 'footer-details',
+    type: 'text',
+    x: 100, y: 720, width: 600, height: 30, rotation: 0, opacity: 1, locked: false, zIndex: 20,
+    textProps: {
+      content: `Join online: ${brandName} • Learn Today, Lead Tomorrow`,
+      fontSize: 12,
+      fontFamily: 'Inter',
+      color: '#64748b',
+      bold: false,
+      italic: true,
+      underline: false,
+      align: 'center',
+      letterSpacing: 0.5,
+      lineHeight: 1.2,
+      glow: false,
+      shadow: ''
+    }
+  });
+
+  return { items, height };
+};
