@@ -309,18 +309,32 @@ export const calculatePremiumMCQLayout = (
   const questionHeight = Math.max(80, questionLines * 26 + 20);
 
   const items: any[] = [
-    // Background base
+    // Background base - UNLOCKED and set to brand color
     {
       id: 'bg-rect',
       type: 'shape',
-      x: 0, y: 0, width: 800, height: 800, rotation: 0, opacity: 1, locked: true, zIndex: 1,
-      shapeProps: { shapeType: 'rect', fill: '#0a0d17', stroke: primaryColor, strokeWidth: 5 }
+      x: 0, y: 0, width: 800, height: 800, rotation: 0, opacity: 1, locked: false, zIndex: 1,
+      shapeProps: { shapeType: 'rect', fill: primaryColor || '#0a0d17', stroke: secondaryColor || '#3b82f6', strokeWidth: 4 }
+    },
+    // Top-left ambient glow circle
+    {
+      id: 'glow-top-left',
+      type: 'shape',
+      x: -100, y: -100, width: 350, height: 350, rotation: 0, opacity: 0.12, locked: false, zIndex: 2,
+      shapeProps: { shapeType: 'circle', fill: secondaryColor, stroke: '', strokeWidth: 0 }
+    },
+    // Bottom-right ambient glow circle
+    {
+      id: 'glow-bottom-right',
+      type: 'shape',
+      x: 550, y: 550, width: 350, height: 350, rotation: 0, opacity: 0.12, locked: false, zIndex: 3,
+      shapeProps: { shapeType: 'circle', fill: secondaryColor, stroke: '', strokeWidth: 0 }
     },
     // Header brand logo
     {
       id: 'brand-logo',
       type: logoUrl ? 'logo' : 'shape',
-      x: 350, y: 35, width: 100, height: 50, rotation: 0, opacity: 1, locked: false, zIndex: 2,
+      x: 350, y: 35, width: 100, height: 50, rotation: 0, opacity: 1, locked: false, zIndex: 4,
       imageProps: logoUrl ? { src: logoUrl, blur: 0, brightness: 1, contrast: 1 } : undefined,
       shapeProps: logoUrl ? undefined : { shapeType: 'circle', fill: secondaryColor, stroke: '', strokeWidth: 0 }
     },
@@ -328,7 +342,7 @@ export const calculatePremiumMCQLayout = (
     {
       id: 'brand-label',
       type: 'text',
-      x: 100, y: 95, width: 600, height: 30, rotation: 0, opacity: 1, locked: false, zIndex: 3,
+      x: 100, y: 95, width: 600, height: 30, rotation: 0, opacity: 1, locked: false, zIndex: 5,
       textProps: {
         content: brandName.toUpperCase(),
         fontSize: 16,
@@ -348,7 +362,7 @@ export const calculatePremiumMCQLayout = (
     {
       id: 'subtitle-banner',
       type: 'text',
-      x: 100, y: 130, width: 600, height: 35, rotation: 0, opacity: 1, locked: false, zIndex: 4,
+      x: 100, y: 130, width: 600, height: 35, rotation: 0, opacity: 1, locked: false, zIndex: 6,
       textProps: {
         content: "DAILY MCQ QUIZ",
         fontSize: 22,
@@ -368,14 +382,14 @@ export const calculatePremiumMCQLayout = (
     {
       id: 'question-card',
       type: 'shape',
-      x: 80, y: currentY, width: 640, height: questionHeight, rotation: 0, opacity: 1, locked: false, zIndex: 5,
+      x: 80, y: currentY, width: 640, height: questionHeight, rotation: 0, opacity: 1, locked: false, zIndex: 7,
       shapeProps: { shapeType: 'rect', fill: 'rgba(255, 255, 255, 0.02)', stroke: 'rgba(255, 255, 255, 0.05)', strokeWidth: 1 }
     },
     // Question Text Node
     {
       id: 'question-text',
       type: 'text',
-      x: 100, y: currentY + 12, width: 600, height: questionHeight - 24, rotation: 0, opacity: 1, locked: false, zIndex: 6,
+      x: 100, y: currentY + 12, width: 600, height: questionHeight - 24, rotation: 0, opacity: 1, locked: false, zIndex: 8,
       textProps: {
         content: question,
         fontSize: 20,
@@ -408,11 +422,11 @@ export const calculatePremiumMCQLayout = (
     items.push({
       id: `opt-${optionLetter.toLowerCase()}-bg`,
       type: 'shape',
-      x: 80, y: currentY, width: 640, height: optHeight, rotation: 0, opacity: 1, locked: false, zIndex: 7 + idx * 2,
+      x: 80, y: currentY, width: 640, height: optHeight, rotation: 0, opacity: 1, locked: false, zIndex: 10 + idx * 2,
       shapeProps: { 
         shapeType: 'rect', 
         fill: idx === 0 ? 'rgba(59, 130, 246, 0.05)' : 'rgba(255, 255, 255, 0.01)', 
-        stroke: idx === 0 ? primaryColor : 'rgba(255, 255, 255, 0.08)', 
+        stroke: idx === 0 ? secondaryColor : 'rgba(255, 255, 255, 0.08)', 
         strokeWidth: idx === 0 ? 1.5 : 1 
       }
     });
@@ -421,7 +435,7 @@ export const calculatePremiumMCQLayout = (
     items.push({
       id: `opt-${optionLetter.toLowerCase()}-text`,
       type: 'text',
-      x: 100, y: currentY + (optHeight - 20) / 2 - 2, width: 600, height: 26, rotation: 0, opacity: 1, locked: false, zIndex: 8 + idx * 2,
+      x: 100, y: currentY + (optHeight - 20) / 2 - 2, width: 600, height: 26, rotation: 0, opacity: 1, locked: false, zIndex: 11 + idx * 2,
       textProps: {
         content: `${optionLetter}) ${opt}`,
         fontSize: 14,
@@ -449,7 +463,7 @@ export const calculatePremiumMCQLayout = (
   items.push({
     id: 'footer-details',
     type: 'text',
-    x: 100, y: currentY, width: 600, height: 30, rotation: 0, opacity: 1, locked: false, zIndex: 20,
+    x: 100, y: currentY, width: 600, height: 30, rotation: 0, opacity: 1, locked: false, zIndex: 30,
     textProps: {
       content: `Join online: ${brandName} • Learn Today, Lead Tomorrow`,
       fontSize: 12,
@@ -472,6 +486,9 @@ export const calculatePremiumMCQLayout = (
   // Update background base height if it expanded past 800px
   items[0].width = width;
   items[0].height = finalCanvasHeight;
+  
+  // Re-adjust bottom-right glow height dynamically
+  items[2].y = finalCanvasHeight - 250;
 
   return { items, height: finalCanvasHeight };
 };
@@ -490,18 +507,58 @@ export const calculateQuizizzGridMCQLayout = (
   const height = 800;
   
   const items: any[] = [
-    // Background base
+    // Background base - UNLOCKED and set to brand color
     {
       id: 'bg-rect',
       type: 'shape',
-      x: 0, y: 0, width: 800, height: 800, rotation: 0, opacity: 1, locked: true, zIndex: 1,
-      shapeProps: { shapeType: 'rect', fill: '#0a0d17', stroke: primaryColor, strokeWidth: 5 }
+      x: 0, y: 0, width: 800, height: 800, rotation: 0, opacity: 1, locked: false, zIndex: 1,
+      shapeProps: { shapeType: 'rect', fill: primaryColor || '#0a0d17', stroke: secondaryColor || '#3b82f6', strokeWidth: 5 }
+    },
+    // Top-left glow
+    {
+      id: 'glow-top-left',
+      type: 'shape',
+      x: -120, y: -120, width: 350, height: 350, rotation: 0, opacity: 0.12, locked: false, zIndex: 2,
+      shapeProps: { shapeType: 'circle', fill: secondaryColor, stroke: '', strokeWidth: 0 }
+    },
+    // Bottom-right glow
+    {
+      id: 'glow-bottom-right',
+      type: 'shape',
+      x: 570, y: 570, width: 350, height: 350, rotation: 0, opacity: 0.12, locked: false, zIndex: 3,
+      shapeProps: { shapeType: 'circle', fill: secondaryColor, stroke: '', strokeWidth: 0 }
+    },
+    // Modern geometric corner brackets (Top-Left)
+    {
+      id: 'corner-bracket-tl-h',
+      type: 'shape',
+      x: 20, y: 20, width: 60, height: 4, rotation: 0, opacity: 0.6, locked: false, zIndex: 4,
+      shapeProps: { shapeType: 'rect', fill: secondaryColor, stroke: '', strokeWidth: 0 }
+    },
+    {
+      id: 'corner-bracket-tl-v',
+      type: 'shape',
+      x: 20, y: 20, width: 4, height: 60, rotation: 0, opacity: 0.6, locked: false, zIndex: 5,
+      shapeProps: { shapeType: 'rect', fill: secondaryColor, stroke: '', strokeWidth: 0 }
+    },
+    // Modern geometric corner brackets (Bottom-Right)
+    {
+      id: 'corner-bracket-br-h',
+      type: 'shape',
+      x: 720, y: 776, width: 60, height: 4, rotation: 0, opacity: 0.6, locked: false, zIndex: 6,
+      shapeProps: { shapeType: 'rect', fill: secondaryColor, stroke: '', strokeWidth: 0 }
+    },
+    {
+      id: 'corner-bracket-br-v',
+      type: 'shape',
+      x: 776, y: 720, width: 4, height: 60, rotation: 0, opacity: 0.6, locked: false, zIndex: 7,
+      shapeProps: { shapeType: 'rect', fill: secondaryColor, stroke: '', strokeWidth: 0 }
     },
     // Header brand logo
     {
       id: 'brand-logo',
       type: logoUrl ? 'logo' : 'shape',
-      x: 350, y: 35, width: 100, height: 50, rotation: 0, opacity: 1, locked: false, zIndex: 2,
+      x: 350, y: 35, width: 100, height: 50, rotation: 0, opacity: 1, locked: false, zIndex: 8,
       imageProps: logoUrl ? { src: logoUrl, blur: 0, brightness: 1, contrast: 1 } : undefined,
       shapeProps: logoUrl ? undefined : { shapeType: 'circle', fill: secondaryColor, stroke: '', strokeWidth: 0 }
     },
@@ -509,7 +566,7 @@ export const calculateQuizizzGridMCQLayout = (
     {
       id: 'brand-label',
       type: 'text',
-      x: 100, y: 95, width: 600, height: 30, rotation: 0, opacity: 1, locked: false, zIndex: 3,
+      x: 100, y: 95, width: 600, height: 30, rotation: 0, opacity: 1, locked: false, zIndex: 9,
       textProps: {
         content: brandName.toUpperCase(),
         fontSize: 16,
@@ -529,7 +586,7 @@ export const calculateQuizizzGridMCQLayout = (
     {
       id: 'subtitle-banner',
       type: 'text',
-      x: 100, y: 130, width: 600, height: 30, rotation: 0, opacity: 1, locked: false, zIndex: 4,
+      x: 100, y: 130, width: 600, height: 30, rotation: 0, opacity: 1, locked: false, zIndex: 10,
       textProps: {
         content: "DAILY MCQ CHALLENGE",
         fontSize: 22,
@@ -549,10 +606,10 @@ export const calculateQuizizzGridMCQLayout = (
     {
       id: 'question-card',
       type: 'shape',
-      x: 110, y: 190, width: 580, height: 210, rotation: 0, opacity: 1, locked: false, zIndex: 5,
+      x: 110, y: 190, width: 580, height: 210, rotation: 0, opacity: 1, locked: false, zIndex: 11,
       shapeProps: { 
         shapeType: 'rect', 
-        fill: 'transparent', 
+        fill: 'rgba(255, 255, 255, 0.02)', 
         stroke: secondaryColor, 
         strokeWidth: 3 
       }
@@ -561,7 +618,7 @@ export const calculateQuizizzGridMCQLayout = (
     {
       id: 'question-mark-icon',
       type: 'text',
-      x: 82, y: 168, width: 60, height: 60, rotation: 0, opacity: 1, locked: false, zIndex: 6,
+      x: 82, y: 168, width: 60, height: 60, rotation: 0, opacity: 1, locked: false, zIndex: 12,
       textProps: {
         content: "?",
         fontSize: 64,
@@ -581,7 +638,7 @@ export const calculateQuizizzGridMCQLayout = (
     {
       id: 'question-text',
       type: 'text',
-      x: 140, y: 210, width: 520, height: 170, rotation: 0, opacity: 1, locked: false, zIndex: 7,
+      x: 140, y: 210, width: 520, height: 170, rotation: 0, opacity: 1, locked: false, zIndex: 13,
       textProps: {
         content: question,
         fontSize: 18,
@@ -618,7 +675,7 @@ export const calculateQuizizzGridMCQLayout = (
     items.push({
       id: `opt-${optionLetter.toLowerCase()}-bg`,
       type: 'shape',
-      x: pos.bx, y: pos.by, width: 285, height: 65, rotation: 0, opacity: 1, locked: false, zIndex: 10 + idx * 2,
+      x: pos.bx, y: pos.by, width: 285, height: 65, rotation: 0, opacity: 1, locked: false, zIndex: 20 + idx * 2,
       shapeProps: {
         shapeType: 'rect',
         fill: isOptionB ? '#e11d48' : 'transparent', // Solid crimson for B
@@ -630,7 +687,7 @@ export const calculateQuizizzGridMCQLayout = (
     items.push({
       id: `opt-${optionLetter.toLowerCase()}-text`,
       type: 'text',
-      x: pos.tx, y: pos.ty, width: 245, height: 30, rotation: 0, opacity: 1, locked: false, zIndex: 11 + idx * 2,
+      x: pos.tx, y: pos.ty, width: 245, height: 30, rotation: 0, opacity: 1, locked: false, zIndex: 21 + idx * 2,
       textProps: {
         content: `${optionLetter}) ${opt}`,
         fontSize: 13,
@@ -653,7 +710,7 @@ export const calculateQuizizzGridMCQLayout = (
   items.push({
     id: 'footer-details',
     type: 'text',
-    x: 100, y: 720, width: 600, height: 30, rotation: 0, opacity: 1, locked: false, zIndex: 20,
+    x: 100, y: 720, width: 600, height: 30, rotation: 0, opacity: 1, locked: false, zIndex: 40,
     textProps: {
       content: `Join online: ${brandName} • Learn Today, Lead Tomorrow`,
       fontSize: 12,
