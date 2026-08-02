@@ -5,7 +5,7 @@ import { useAppStore, Project } from '@/store/useAppStore';
 import { useEditorStore, CanvasItem } from '@/store/useEditorStore';
 import { useBrandStore } from '@/store/useBrandStore';
 import { Layers, Search, Bookmark, ArrowRight } from 'lucide-react';
-import { calculatePremiumMCQLayout, calculateQuizizzGridMCQLayout } from '@/utils/canvas-helpers';
+import { calculateDynamicMCQLayout } from '@/utils/canvas-helpers';
 
 interface PresetTemplate {
   name: string;
@@ -18,12 +18,301 @@ interface PresetTemplate {
 
 const PRESET_TEMPLATES: PresetTemplate[] = [
   {
-    name: "Daily MCQ Contest Post",
+    name: "Quiz Show Premium Grid Template",
+    category: "MCQ",
+    width: 800,
+    height: 800,
+    description: "3D Metallic MCQ Quiz header, double blue neon outline cards, circular option badges with vertical separators. Premium arcade layout.",
+    createItems: (brand, primary, secondary, logo) => calculateDynamicMCQLayout(
+      "quiz-show",
+      "জবা ফুলের অমরাবিন্যাস কোন ধরনের?",
+      ["অক্ষীয়", "গাত্রীয়", "প্রান্তীয়", "শীর্ষদেশীয়"],
+      brand,
+      primary,
+      secondary,
+      logo
+    ).items
+  },
+  {
+    name: "Glowing Neon Pink & Cyan MCQ",
+    category: "MCQ",
+    width: 800,
+    height: 800,
+    description: "Cyberpunk themed glowing pink backgrounds and cyan highlights with ambient neon lights.",
+    createItems: (brand, primary, secondary, logo) => calculateDynamicMCQLayout(
+      "neon",
+      "Which describes the rate of change of momentum of an object?",
+      ["Velocity", "Acceleration", "Force", "Kinetic Energy"],
+      brand,
+      primary,
+      secondary,
+      logo
+    ).items
+  },
+  {
+    name: "Cyberpunk MCQ Yellow & Magenta",
+    category: "MCQ",
+    width: 800,
+    height: 800,
+    description: "High-contrast cyberpunk styling with yellow frames and magenta accent details.",
+    createItems: (brand, primary, secondary, logo) => calculateDynamicMCQLayout(
+      "cyberpunk",
+      "What is the molecular geometry of SF6 (Sulfur Hexafluoride)?",
+      ["Tetrahedral", "Trigonal Bipyramidal", "Octahedral", "Square Planar"],
+      brand,
+      primary,
+      secondary,
+      logo
+    ).items
+  },
+  {
+    name: "Retro Synthwave Purple MCQ",
+    category: "MCQ",
+    width: 800,
+    height: 800,
+    description: "Retro grid synthwave aesthetics with pink, purple, and magenta gradients.",
+    createItems: (brand, primary, secondary, logo) => calculateDynamicMCQLayout(
+      "retro-wave",
+      "Evaluate the limit: \\lim_{x \\to 0} \\frac{\\sin(x)}{x}.",
+      ["0", "1", "Infinity", "Undefined"],
+      brand,
+      primary,
+      secondary,
+      logo
+    ).items
+  },
+  {
+    name: "Carbon Slate & Hot Red MCQ",
+    category: "MCQ",
+    width: 800,
+    height: 800,
+    description: "Dark carbon background with hot red accent highlights for speed-run quizes.",
+    createItems: (brand, primary, secondary, logo) => calculateDynamicMCQLayout(
+      "speed-run",
+      "During which phase of mitosis do sister chromatids separate?",
+      ["Prophase", "Metaphase", "Anaphase", "Telophase"],
+      brand,
+      primary,
+      secondary,
+      logo
+    ).items
+  },
+  {
+    name: "Frosted Glassmorphism MCQ",
+    category: "MCQ",
+    width: 800,
+    height: 800,
+    description: "Sleek frosted glass look using semi-transparent containers and soft blurred neon spots.",
+    createItems: (brand, primary, secondary, logo) => calculateDynamicMCQLayout(
+      "glassmorphic",
+      "Which organelle is responsible for cellular respiration and ATP generation?",
+      ["Chloroplast", "Golgi Apparatus", "Mitochondria", "Lysosome"],
+      brand,
+      primary,
+      secondary,
+      logo
+    ).items
+  },
+  {
+    name: "Classroom Chalkboard Green MCQ",
+    category: "MCQ",
+    width: 800,
+    height: 800,
+    description: "Traditional green chalkboard design with white chalk-styled outline cards and monospaced text.",
+    createItems: (brand, primary, secondary, logo) => calculateDynamicMCQLayout(
+      "chalkboard",
+      "পৃথিবীর পৃষ্ঠ থেকে মুক্তিবেগ (Escape velocity) কত?",
+      ["৯.৮ কিমি/সে.", "১১.২ কিমি/সে.", "৪২.১ কিমি/সে.", "৭.৫ কিমি/সে."],
+      brand,
+      primary,
+      secondary,
+      logo
+    ).items
+  },
+  {
+    name: "Blueprint Sheet Grid MCQ",
+    category: "MCQ",
+    width: 800,
+    height: 800,
+    description: "Technical mathematical blueprint sheet grid with bright cyan outlines.",
+    createItems: (brand, primary, secondary, logo) => calculateDynamicMCQLayout(
+      "math-sheets",
+      "Solve the derivative: \\frac{d}{dx} (e^{x^2}).",
+      ["e^{x^2}", "2x e^{x^2}", "x^2 e^{x^2-1}", "2 e^{x^2}"],
+      brand,
+      primary,
+      secondary,
+      logo
+    ).items
+  },
+  {
+    name: "Indigo Interactive Poll MCQ",
+    category: "MCQ",
+    width: 800,
+    height: 800,
+    description: "Clean interactive style poll template with checkbox outline indicators.",
+    createItems: (brand, primary, secondary, logo) => calculateDynamicMCQLayout(
+      "interactive-poll",
+      "What does IP stand for in network terminology?",
+      ["Intranet Protocol", "Information Provider", "Internet Protocol", "Instant Portability"],
+      brand,
+      primary,
+      secondary,
+      logo
+    ).items
+  },
+  {
+    name: "Soft Pastel & Cream Card MCQ",
+    category: "MCQ",
+    width: 800,
+    height: 800,
+    description: "Charming pastel cream card setup using soft colors and spacious layouts.",
+    createItems: (brand, primary, secondary, logo) => calculateDynamicMCQLayout(
+      "pastel",
+      "Which river is the longest in the world?",
+      ["Amazon River", "Nile River", "Yangtze River", "Mississippi River"],
+      brand,
+      primary,
+      secondary,
+      logo
+    ).items
+  },
+  {
+    name: "Minimalist Academic Serif MCQ",
+    category: "MCQ",
+    width: 800,
+    height: 800,
+    description: "Clean book style academic outline with serif typography and maximum spacing.",
+    createItems: (brand, primary, secondary, logo) => calculateDynamicMCQLayout(
+      "minimalist",
+      "What is the primary function of DNA in living organisms?",
+      ["Energy storage", "Storage of genetic information", "Catalyzing metabolic reactions", "Forming cellular membranes"],
+      brand,
+      primary,
+      secondary,
+      logo
+    ).items
+  },
+  {
+    name: "Golden Amber & Dark Navy MCQ",
+    category: "MCQ",
+    width: 800,
+    height: 800,
+    description: "Luxury dark navy card design with golden amber decorations.",
+    createItems: (brand, primary, secondary, logo) => calculateDynamicMCQLayout(
+      "classic-board",
+      "সীма মূল্যায়ন করুন: \\lim_{x \\to 0} \\frac{\\sin(x)}{x}।",
+      ["০", "১", "অসীম", "অসংজ্ঞায়িত"],
+      brand,
+      primary,
+      secondary,
+      logo
+    ).items
+  },
+  {
+    name: "Modern Academy Slate Card MCQ",
+    category: "MCQ",
+    width: 800,
+    height: 800,
+    description: "Clean slate-grey layout optimized for digital classrooms and academies.",
+    createItems: (brand, primary, secondary, logo) => calculateDynamicMCQLayout(
+      "modern-academy",
+      "ক্ষারীয় দ্রবণে কোন নির্দেশকটি গোলাপী বর্ণ ধারণ করে?",
+      ["মিথাইল অরেঞ্জ", "ফেনলফথ্যালিন", "লিটমাস পেপার", "ব্রোমোথাইমল ব্লু"],
+      brand,
+      primary,
+      secondary,
+      logo
+    ).items
+  },
+  {
+    name: "Sunset Orange & Purple MCQ",
+    category: "MCQ",
+    width: 800,
+    height: 800,
+    description: "Vibrant sunset glow layout with warm orange accents and purple backdrops.",
+    createItems: (brand, primary, secondary, logo) => calculateDynamicMCQLayout(
+      "sunset-gradient",
+      "উদ্ভিদ কোষের শক্তিঘর (Powerhouse) বলা হয় কোন অঙ্গাণুটিকে?",
+      ["প্লাস্টিড", "গলজি বডি", "মাইটোকন্ড্রিয়া", "লাইসোসোম"],
+      brand,
+      primary,
+      secondary,
+      logo
+    ).items
+  },
+  {
+    name: "Coaching Special Red & White MCQ",
+    category: "MCQ",
+    width: 800,
+    height: 800,
+    description: "High-contrast red banner with white card text blocks for local coaching centers.",
+    createItems: (brand, primary, secondary, logo) => calculateDynamicMCQLayout(
+      "coaching-special",
+      "কোনটি বস্তুর ভরবেগের পরিবর্তনের হারের সমান?",
+      ["বেগ", "ত্বরণ", "বল", "গতিশক্তি"],
+      brand,
+      primary,
+      secondary,
+      logo
+    ).items
+  },
+  {
+    name: "Stealth Black & Zn-zinc Outline MCQ",
+    category: "MCQ",
+    width: 800,
+    height: 800,
+    description: "Stealth look using pitch-black backgrounds and clean zinc-gray borders.",
+    createItems: (brand, primary, secondary, logo) => calculateDynamicMCQLayout(
+      "dark-stealth",
+      "What is the speed of light in a vacuum?",
+      ["3.00 × 10⁸ m/s", "3.00 × 10⁵ m/s", "1.50 × 10⁸ m/s", "9.81 m/s"],
+      brand,
+      primary,
+      secondary,
+      logo
+    ).items
+  },
+  {
+    name: "Royal Emerald & Gold Accent MCQ",
+    category: "MCQ",
+    width: 800,
+    height: 800,
+    description: "Premium emerald green layout with amber gold card decorations.",
+    createItems: (brand, primary, secondary, logo) => calculateDynamicMCQLayout(
+      "royal-gold",
+      "একটি বৃত্তের ব্যাসার্ধ r হলে, তার ক্ষেত্রফলের সূত্র কী?",
+      ["২\\pi r", "\\pi r^2", "\\pi d", "\\frac{4}{3}\\pi r^3"],
+      brand,
+      primary,
+      secondary,
+      logo
+    ).items
+  },
+  {
+    name: "Corporate Clean Navy Blue MCQ",
+    category: "MCQ",
+    width: 800,
+    height: 800,
+    description: "Clean corporate layout with solid navy blue headers and minimal branding.",
+    createItems: (brand, primary, secondary, logo) => calculateDynamicMCQLayout(
+      "corporate-clean",
+      "IP-এর পূর্ণরূপ কী?",
+      ["Internet Protocol", "Internet Provider", "Information Port", "Instant Packet"],
+      brand,
+      primary,
+      secondary,
+      logo
+    ).items
+  },
+  {
+    name: "Standard Vertical Stack MCQ",
     category: "MCQ",
     width: 800,
     height: 900,
-    description: "Square post template optimized for sharing MCQ contests on Facebook, LinkedIn, or WhatsApp.",
-    createItems: (brand, primary, secondary, logo) => calculatePremiumMCQLayout(
+    description: "Spacious vertical stack layout ideal for long questions and explanations.",
+    createItems: (brand, primary, secondary, logo) => calculateDynamicMCQLayout(
+      "stacked",
       "What is the result of evaluating the derivative:\n\\frac{d}{dx} (x^2 \\sin(x))?",
       ["2x \\sin(x) + x^2 \\cos(x)", "2x \\cos(x)", "x^2 \\cos(x) - 2x", "None of these"],
       brand,
@@ -33,14 +322,15 @@ const PRESET_TEMPLATES: PresetTemplate[] = [
     ).items
   },
   {
-    name: "Quizizz MCQ Grid Post",
+    name: "Quizizz 2x2 Grid MCQ",
     category: "MCQ",
     width: 800,
     height: 800,
-    description: "2x2 option grids with a large question card above. Mimics premium Quizizz layouts.",
-    createItems: (brand, primary, secondary, logo) => calculateQuizizzGridMCQLayout(
-      "What is the result of evaluating the derivative:\n\\frac{d}{dx} (x^2 \\sin(x))?",
-      ["2x \\sin(x) + x^2 \\cos(x)", "2x \\cos(x)", "x^2 \\cos(x) - 2x", "None of these"],
+    description: "Balanced 2x2 grid layout resembling classic quiz game systems.",
+    createItems: (brand, primary, secondary, logo) => calculateDynamicMCQLayout(
+      "grid",
+      "What is the speed of light in a vacuum?",
+      ["3.00 × 10⁸ m/s", "3.00 × 10⁵ m/s", "1.50 × 10⁸ m/s", "9.81 m/s"],
       brand,
       primary,
       secondary,
