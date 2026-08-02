@@ -255,15 +255,15 @@ export const calculateDynamicMCQLayout = (
       break;
     case 'quiz-show':
       bgFill = '#02040a';
-      bgStroke = '#0052cc';
+      bgStroke = pc;
       bgStrokeWidth = 5;
       gridLayout = true;
       break;
     case 'neon':
       bgFill = '#040209';
-      bgStroke = '#ec4899'; // Pink
-      optStroke = '#06b6d4'; // Cyan
-      optFill = 'rgba(6, 182, 212, 0.02)';
+      bgStroke = pc;
+      optStroke = sc;
+      optFill = 'rgba(255, 255, 255, 0.01)';
       cornerBrackets = true;
       break;
     case 'glassmorphic':
@@ -275,10 +275,10 @@ export const calculateDynamicMCQLayout = (
       break;
     case 'pastel':
       bgFill = '#fdfbf7'; // Pastel Cream
-      bgStroke = '#f5e0c3';
+      bgStroke = pc;
       textTheme = '#2d3748';
       optFill = '#ffffff';
-      optStroke = '#e2e8f0';
+      optStroke = sc;
       optTextTheme = '#4a5568';
       break;
     case 'chalkboard':
@@ -292,36 +292,36 @@ export const calculateDynamicMCQLayout = (
       break;
     case 'cyberpunk':
       bgFill = '#000000';
-      bgStroke = '#facc15'; // Yellow
-      optStroke = '#38bdf8'; // Cyan
-      optFill = 'rgba(56, 189, 248, 0.01)';
+      bgStroke = pc;
+      optStroke = sc;
+      optFill = 'rgba(255, 255, 255, 0.01)';
       cyberpunkDecor = true;
       break;
     case 'minimalist':
       bgFill = '#ffffff';
-      bgStroke = '#000000';
+      bgStroke = pc;
       textTheme = '#000000';
       optFill = 'transparent';
-      optStroke = '#000000';
+      optStroke = sc;
       optTextTheme = '#000000';
       fontTheme = 'serif';
       bgStrokeWidth = 2;
       break;
     case 'classic-board':
       bgFill = '#080c14';
-      bgStroke = '#b45309'; // Dark Gold
-      optStroke = '#d97706'; // Golden
-      optFill = 'rgba(217, 119, 6, 0.02)';
+      bgStroke = pc;
+      optStroke = sc;
+      optFill = 'rgba(255, 255, 255, 0.01)';
       fontTheme = 'serif';
       break;
     case 'retro-wave':
       bgFill = '#170a2c';
-      bgStroke = '#f43f5e'; // Pink
-      optStroke = '#a21caf'; // Magenta
-      optFill = 'rgba(162, 28, 175, 0.03)';
+      bgStroke = pc;
+      optStroke = sc;
+      optFill = 'rgba(255, 255, 255, 0.01)';
       break;
     case 'pop-quiz':
-      bgFill = '#fbbf24'; // High contrast Amber Yellow
+      bgFill = pc; // High contrast Amber Yellow
       bgStroke = '#000000';
       textTheme = '#000000';
       optFill = '#ffffff';
@@ -332,50 +332,49 @@ export const calculateDynamicMCQLayout = (
       break;
     case 'modern-academy':
       bgFill = '#f8fafc';
-      bgStroke = '#0f172a';
+      bgStroke = pc;
       textTheme = '#0f172a';
       optFill = '#ffffff';
-      optStroke = '#cbd5e1';
+      optStroke = sc;
       optTextTheme = '#334155';
       break;
     case 'sunset-gradient':
       bgFill = '#1c0d24'; // Violet
-      bgStroke = '#ea580c'; // Orange
-      optStroke = '#f97316';
+      bgStroke = pc;
+      optStroke = sc;
       break;
     case 'coaching-special':
-      bgFill = '#991b1b'; // Crimson Red
+      bgFill = pc; // Crimson Red
       bgStroke = '#ffffff';
       optFill = '#ffffff';
-      optStroke = '#991b1b';
+      optStroke = pc;
       optTextTheme = '#7f1d1d';
       break;
     case 'math-sheets':
-      bgFill = '#0369a1'; // Sky Blue
+      bgFill = pc; // Sky Blue
       bgStroke = '#ffffff';
       mathGrid = true;
       break;
     case 'speed-run':
       bgFill = '#111827';
-      bgStroke = '#dc2626'; // Hot Red
-      optStroke = '#dc2626';
+      bgStroke = pc;
+      optStroke = sc;
       break;
     case 'interactive-poll':
       bgFill = '#090d16';
-      bgStroke = '#6366f1';
-      checkboxDecor = true;
+      bgStroke = pc;
       break;
     case 'dark-stealth':
       bgFill = '#020205';
-      bgStroke = '#18181b';
-      optStroke = '#27272a';
+      bgStroke = pc;
+      optStroke = sc;
       optFill = '#000000';
       break;
     case 'royal-gold':
       bgFill = '#022c22'; // Luxury Emerald Green
-      bgStroke = '#d97706'; // Gold
-      optStroke = '#fbbf24';
-      optFill = 'rgba(251, 191, 36, 0.02)';
+      bgStroke = pc;
+      optStroke = sc;
+      optFill = 'rgba(255, 255, 255, 0.01)';
       goldDecor = true;
       break;
     default:
@@ -430,7 +429,7 @@ export const calculateDynamicMCQLayout = (
         id: 'badge-shield',
         type: 'shape',
         x: 230, y: 20, width: 340, height: 120, rotation: 0, opacity: 1, locked: false, zIndex: 8,
-        shapeProps: { shapeType: 'rect', fill: '#050a18', stroke: '#00e5ff', strokeWidth: 3 }
+        shapeProps: { shapeType: 'rect', fill: '#050a18', stroke: sc, strokeWidth: 3 }
       },
       {
         id: 'badge-mcq',
@@ -496,7 +495,7 @@ export const calculateDynamicMCQLayout = (
           id: 'question-card',
           type: 'shape',
           x: 80, y: 175, width: 640, height: 210, rotation: 0, opacity: 1, locked: false, zIndex: 11,
-          shapeProps: { shapeType: 'rect', fill: 'rgba(2, 4, 10, 0.75)', stroke: '#0066ff', strokeWidth: 3 }
+          shapeProps: { shapeType: 'rect', fill: 'rgba(2, 4, 10, 0.75)', stroke: pc, strokeWidth: 3 }
         },
         {
           id: 'question-text',
@@ -532,7 +531,7 @@ export const calculateDynamicMCQLayout = (
           id: `opt-${idx}-bg`,
           type: 'shape',
           x: pos.bx, y: pos.by, width: 305, height: 80, rotation: 0, opacity: 1, locked: false, zIndex: 20 + idx * 4,
-          shapeProps: { shapeType: 'rect', fill: 'rgba(2, 4, 10, 0.5)', stroke: '#0066ff', strokeWidth: 2 }
+          shapeProps: { shapeType: 'rect', fill: 'rgba(2, 4, 10, 0.5)', stroke: pc, strokeWidth: 2 }
         });
 
         // Circle Badge
@@ -540,7 +539,7 @@ export const calculateDynamicMCQLayout = (
           id: `opt-${idx}-circle`,
           type: 'shape',
           x: pos.bx + 15, y: pos.by + 18, width: 44, height: 44, rotation: 0, opacity: 1, locked: false, zIndex: 21 + idx * 4,
-          shapeProps: { shapeType: 'circle', fill: '#02040a', stroke: '#00e5ff', strokeWidth: 2 }
+          shapeProps: { shapeType: 'circle', fill: '#02040a', stroke: sc, strokeWidth: 2 }
         });
 
         // Letter
@@ -580,13 +579,13 @@ export const calculateDynamicMCQLayout = (
           id: 'footer-dot-l',
           type: 'shape',
           x: 230, y: 742, width: 8, height: 8, rotation: 0, opacity: 1, locked: false, zIndex: 41,
-          shapeProps: { shapeType: 'circle', fill: '#00e5ff' }
+          shapeProps: { shapeType: 'circle', fill: sc }
         },
         {
           id: 'footer-dot-r',
           type: 'shape',
           x: 560, y: 742, width: 8, height: 8, rotation: 0, opacity: 1, locked: false, zIndex: 42,
-          shapeProps: { shapeType: 'circle', fill: '#00e5ff' }
+          shapeProps: { shapeType: 'circle', fill: sc }
         }
       );
     } else {

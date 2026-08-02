@@ -168,6 +168,17 @@ export default function EditorView() {
     }
   }, [brandKit, currentProjectId]);
 
+  // Auto-fit zoom on mobile screens on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const isMobile = window.innerWidth < 768;
+      if (isMobile) {
+        const fitScale = Math.min(0.9, (window.innerWidth - 32) / canvasWidth);
+        setZoom(fitScale);
+      }
+    }
+  }, [canvasWidth]);
+
   // Auto save draft to current project listing
   useEffect(() => {
     if (items.length > 0 && currentProjectId) {
@@ -589,15 +600,13 @@ export default function EditorView() {
     return null;
   };
 
-  const selectedItem = items.find(i => i.id === selectedId);
-
-  return (
+  const selectedItem = items.find(i => i.id === selectedId);  return (
     <div className="flex flex-col md:flex-row h-[calc(100vh-140px)] w-full animate-in fade-in duration-300 select-none">
       
       {/* 1. Left Editor Toolbar Sidebar */}
-      <div className="w-80 glass-panel border-r border-[var(--glass-border)] flex h-full">
+      <div className="w-full md:w-80 glass-panel border-b md:border-r border-[var(--glass-border)] flex flex-col md:flex-row h-auto md:h-full shrink-0">
         {/* Nav chips */}
-        <div className="w-16 border-r border-[var(--glass-border)] flex flex-col items-center py-4 gap-4">
+        <div className="w-full md:w-16 border-b md:border-r border-[var(--glass-border)] flex flex-row md:flex-col items-center justify-around md:justify-start py-2 md:py-4 gap-2 md:gap-4 shrink-0">
           <button 
             onClick={() => setActivePanel('text')}
             className={`p-2 rounded-lg cursor-pointer ${activePanel === 'text' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:bg-slate-900'}`}
@@ -641,9 +650,9 @@ export default function EditorView() {
             <Layers className="w-5 h-5" />
           </button>
         </div>
-
+ 
         {/* Panel View */}
-        <div className="flex-1 p-4 overflow-y-auto space-y-4">
+        <div className="flex-1 p-4 overflow-y-auto space-y-4 max-h-[220px] md:max-h-none border-b md:border-b-0 border-[var(--glass-border)]">
           
           {activePanel === 'text' && (
             <div className="space-y-3">
@@ -868,7 +877,7 @@ export default function EditorView() {
         {/* Outer view centering wrapper */}
         <div 
           onClick={() => selectItem(null)}
-          className="flex-1 overflow-auto canvas-wrapper p-12 flex items-center justify-center relative"
+          className="flex-1 overflow-auto canvas-wrapper p-4 md:p-12 flex items-center justify-center relative touch-none"
         >
           {/* Main workspace bounding box */}
           <div
@@ -881,7 +890,7 @@ export default function EditorView() {
               transformOrigin: 'center center',
               boxShadow: '0 25px 50px -12px rgba(0,0,0,0.6)'
             }}
-            className="bg-[#0f172a] relative overflow-hidden select-none border border-slate-700/60"
+            className="bg-[#0f172a] relative overflow-hidden select-none border border-slate-700/60 touch-none"
             onPointerMove={handlePointerMove}
           >
             {/* Snap line overlays */}
@@ -919,7 +928,7 @@ export default function EditorView() {
                       zIndex: item.zIndex,
                       cursor: item.locked ? 'not-allowed' : 'move'
                     }}
-                    className={`group ${isSelected ? 'outline outline-2 outline-indigo-500' : 'hover:outline hover:outline-1 hover:outline-indigo-500/60'}`}
+                    className={`group touch-none ${isSelected ? 'outline outline-2 outline-indigo-500' : 'hover:outline hover:outline-1 hover:outline-indigo-500/60'}`}
                     onPointerDown={(e) => handlePointerDown(e, item, 'drag')}
                   >
                     
